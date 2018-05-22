@@ -28,4 +28,8 @@ class Errors {
     static internalServerError() {
         return new Error("Internal Server Error", 500);
     }
+
+    static notFound() {
+        return new Error("Not Found", 404);
+    }
 }
