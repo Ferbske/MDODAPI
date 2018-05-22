@@ -27,7 +27,7 @@ app.all('*', (req, res) => {
 // process.env.PORT specifies the port that Heroku set for the api. Else config.port is used.
 const port = process.env.PORT || config.port;
 app.listen(port, () => {
-    console.log(`The magic happens at localhost:${port}`);
+    console.log(`Listening on port:${port}...`);
 });
 
 module.exports = app;
