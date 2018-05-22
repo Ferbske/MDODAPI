@@ -1,5 +1,5 @@
 class User {
-    constructor(email, password, firstname, lastname){
+    constructor(email, password, firstname, lastname, phonenumber){
         this.email = email
         this.password = password
         this.firstname = firstname
@@ -36,6 +36,14 @@ class User {
 
     set lastname(lastname){
         this.lastname = lastname
+    }
+
+    get phonenumber(){
+        return this.phonenumber
+    }
+
+    set phonenumber(phonenumber){
+        this.phonenumber = phonenumber
     }
 }
 
