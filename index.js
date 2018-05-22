@@ -2,6 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const config = require('./config');
 const Errors = require('./models/Errors');
+const api = require('./routes/api');
+const expressJWT = require('express-jwt');
 const dbc = require('./db/databaseConnector');
 const app = express();
 
@@ -16,8 +18,16 @@ app.use(bodyParser.json({
     type: "application/json"
 }));
 
-// Route to /api/v1/ The first version of the api
-app.use('/api/v1', require('./routes/api_v1'));
+// Require authentication for every request,
+// unless the path is specified below.
+app.use(expressJWT({
+    secret: config.secretKey
+}).unless({
+    path: ['/api/login', '/api/register']
+}));
+
+// Route to /api
+app.use("/api", api);
 
 // This endpoint will be accessed when no routes match with the users url.
 app.all('*', (req, res) => {
