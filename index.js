@@ -23,16 +23,15 @@ app.use(expressJWT({
     secret: config.secretKey
 }).unless({
     path: ['/api/login', '/api/register']
-}));
+}), function (error, req, res, next) {
+    if (error.name === "UnauthorizedError") {
+        const error = Errors.unauthorized();
+        res.status(error.code).json(error);
+    }
+});
 
 // Route to /api
 app.use("/api", api);
-
-// This endpoint will be accessed when no routes match with the users url.
-app.all('*', (req, res) => {
-    const error = Errors.notFound();
-    res.status(error.code).json(error);
-});
 
 // process.env.PORT specifies the port that Heroku set for the api. Else config.port is used.
 const port = process.env.PORT || config.port;
