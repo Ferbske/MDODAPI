@@ -4,6 +4,7 @@ const config = require('./config');
 const Errors = require('./models/Errors');
 const api = require('./routes/api');
 const expressJWT = require('express-jwt');
+const dbc = require('./db/databaseConnector');
 const app = express();
 
 // Returns middleware that only parses urlencode bodies.
