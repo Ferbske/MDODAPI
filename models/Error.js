@@ -4,7 +4,7 @@ class Error {
     constructor(message, code) {
         this.message = message;
         this.code = code;
-        this.timestamp = moment.unix();
+        this.timestamp = moment().format();
     }
 }
 
