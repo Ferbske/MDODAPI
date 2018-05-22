@@ -1,11 +1,11 @@
 {
     "secretKey": "?@$msMCvc^DW+E#e2?prZXe9?QTPuTW&ZK?W*B_X3%8TtVsaMn",
-    "port": 8383,
+    "port": 20,
     "database": {
-        "port": "3000",
-        "host": "localhost",
-        "userame": "mdodUser",
-        "password": "mododTestUser",
+        "port": "3306",
+        "host": "159.65.202.227",
+        "username": "mdoduser",
+        "password": "mdod0002",
         "schema": "mdod"
     }
 }
