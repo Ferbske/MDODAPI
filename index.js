@@ -23,7 +23,7 @@ app.use(bodyParser.json({
 app.use(expressJWT({
     secret: config.secretKey
 }).unless({
-    path: ['/api/login/psychologist', '/api/login/client', '/api/register']
+    path: ['/api/login/psychologist', '/api/login/client', '/api/register/client', '/api/register/psychologist']
 }), function (error, req, res, next) {
     if (error.name === "UnauthorizedError") {
         const error = Errors.unauthorized();
