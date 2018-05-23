@@ -85,6 +85,8 @@ router.post("/register/:role", (req, res) => {
         if (psychologist._email) {
             const name = infix ? `${firstname} ${infix} ${lastname}` : `${firstname} ${lastname}`;
 
+            // TODO: Check if psychologist already exists
+
             db.query("INSERT INTO mdod.Psychologist VALUES(?, ?, ?, ?, ?)", [name, email, password, phonenumber, location], (error, result) => {
                 if (error) {
                     const err = Errors.conflict();
