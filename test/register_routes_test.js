@@ -27,7 +27,7 @@ describe('Registration', function () {
                 res.should.have.status(201);
                 res.body.should.be.a('object');
                 done();
-            })
+            });
     });
 
     it('CLIENT: should return a 200 status when providing valid information', (done) => {
@@ -50,6 +50,49 @@ describe('Registration', function () {
                 res.should.have.status(201);
                 res.body.should.be.a('object');
                 done();
+            });
+    });
+
+    it('PSYCHOLOGIST: should throw an error when the user already exists', (done) => {
+        chai.request(index)
+            .post('/api/register/psychologist')
+            .set('Content-Type', 'application/json')
+            .send({
+                "firstname" : "Stijn",
+                "infix" : "van",
+                "lastname" : "Veen",
+                "phonenumber": "0629456850",
+                "location" : "Bergen op Zoom",
+                "email" : "stijnboz@live.nl",
+                "password" : "wachtwoord"
             })
+            .end((err, res) => {
+                res.should.have.status(403);
+                res.body.should.be.a('object');
+                done();
+            });
+    });
+
+    it('CLIENT: should throw an error when the user already exists', (done) => {
+        chai.request(index)
+            .post('/api/register/client')
+            .set('Content-Type', 'application/json')
+            .send({
+                "firstname": "sjaak",
+                "infix": "",
+                "lastname": "Neus",
+                "dateofbirth": "1996-11-27",
+                "email": "sjaak@gmail.com",
+                "password": "qwerty123",
+                "phonenumber": "062345678",
+                "city" : "Breda",
+                "adress" : "Zuidsingel 8",
+                "zipcode" : "6969 HB"
+            })
+            .end((err, res) => {
+                res.should.have.status(401);
+                res.body.should.be.a('object');
+                done();
+            });
     });
 });

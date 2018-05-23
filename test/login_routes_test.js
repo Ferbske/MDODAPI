@@ -22,7 +22,7 @@ describe('Login', function(){
                 response.should.have.property('token');
                 res.body.should.be.a('object');
                 done();
-            })
+            });
     });
 
     it('PSYCHOLOGIST: should return a token when providing valid information', (done) => {
@@ -39,7 +39,7 @@ describe('Login', function(){
                 response.should.have.property('token');
                 res.body.should.be.a('object');
                 done();
-            })
+            });
     });
 
     it('CLIENT: should throw an error when email does not exist', (done) => {
@@ -54,7 +54,7 @@ describe('Login', function(){
                 res.should.have.status(404);
                 res.body.should.be.a('object');
                 done();
-            })
+            });
     });
 
     it('PSYCHOLOGIST: should throw an error when email does not exist', (done) => {
@@ -69,7 +69,7 @@ describe('Login', function(){
                 res.should.have.status(404);
                 res.body.should.be.a('object');
                 done();
-            })
+            });
     });
 
     it('CLIENT: should throw an error when email exists but password is invalid', (done) => {
@@ -84,7 +84,7 @@ describe('Login', function(){
                 res.should.have.status(401);
                 res.body.should.be.a('object');
                 done();
-            })
+            });
     });
 
     it('PSYCHOLOGIST: should throw an error when email exists but password is invalid', (done) => {
@@ -99,7 +99,7 @@ describe('Login', function(){
                 res.should.have.status(401);
                 res.body.should.be.a('object');
                 done();
-            })
+            });
     });
 
 });
