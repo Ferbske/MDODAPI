@@ -2,11 +2,12 @@ const express = require('express');
 const router = express.Router({});
 const auth = require('../auth/authentication');
 const db = require('../db/databaseConnector');
-const isEmail = require('isemail');
 const Errors = require('../models/Errors');
+const Psychologist = require('../models/Psych');
+const Client = require('../models/Client');
 
 router.post("/login/:role", (req, res) => {
-    let role = req.params.role
+    let role = req.params.role;
     let email = req.body.email || '';
     let password = req.body.password || '';
 
@@ -27,7 +28,7 @@ router.post("/login/:role", (req, res) => {
             if (email == rows[0].email && password == rows[0].password) {
                 var token = auth.encodeToken(email);
                 res.status(200).json({
-                    "token": 'Bearer ' + token,
+                    "token": token,
                     "status": 200,
                     "parameters": res.body
                 });
@@ -53,7 +54,7 @@ router.post("/login/:role", (req, res) => {
             if (email == rows[0].email && password == rows[0].password) {
                 var token = auth.encodeToken(email);
                 res.status(200).json({
-                    "token": 'Bearer ' + token,
+                    "token": token,
                     "status": 200,
                     "parameters": res.body
                 });
@@ -66,7 +67,47 @@ router.post("/login/:role", (req, res) => {
     }
 });
 
-router.post("/register", (req, res) => {
+router.post("/register/:role", (req, res) => {
+    // Define the properties for a user. (Super class).
+    const email = req.body.email || "";
+    const password = req.body.password ||"";
+    const firstname = req.body.firstname || "";
+    const infix = req.body.infix || "";
+    const lastname = req.body.lastname || "";
+    const phonenumber = req.body.phonenumber || "";
+
+    if (req.params.role === "psychologist") {
+        // Define the properties for a psychologist (Sub class).
+        const location = req.body.location || "";
+
+        const psychologist = new Psychologist(email, password, firstname, infix, lastname, location, phonenumber);
+
+        if (psychologist._email) {
+            const name = infix ? `${firstname} ${infix} ${lastname}` : `${firstname} ${lastname}`;
+
+            db.query("INSERT INTO mdod.Psychologist VALUES(?, ?, ?, ?, ?)", [name, email, password, phonenumber, location], (error, result) => {
+                if (error) {
+                    const err = Errors.conflict();
+                    res.status(err.code).json(error)
+                }
+
+                res.status(201).json({
+                    message: "Psycholoog aangemaakt"
+                })
+            })
+        } else {
+            res.status(psychologist.code).json(psychologist);
+        }
+
+    } else if (req.params.role === "client") {
+        // Define the properties for a client (Sub class).
+        const dob = req.body.dob || "";
+        const ciy = req.body.city || "";
+        const address = req.body.address || "";
+        const zipCode = req.body.zipcode || "";
+
+        // TODO: Create client register
+    }
 
 });
 
