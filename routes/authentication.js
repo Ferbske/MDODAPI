@@ -11,11 +11,12 @@ router.post("/login/:role", (req, res) => {
     let password = req.body.password || '';
 
     if (role === 'psychologist') {
-        db.query("USE mdod; SELECT * FROM Psychologist;", function (err, rows, fields) {
+        db.query("SELECT * FROM mdod.Psychologist;", function (err, rows, fields) {
             if (err) {
                 res.status(500).json(err)
                 return;
             }
+            console.log(rows);
 
             if (rows.length < 1) {
                 let error = Errors.notFound()
@@ -30,11 +31,13 @@ router.post("/login/:role", (req, res) => {
                     "status": 200,
                     "parameters": res.body
                 });
-            } else {
-                let error = Errors.unauthorized()
-                res.status(error.status).json(error)
-                return;
             }
+            res.status(200).json({"message" : "hoi"})
+            // else {
+            //     let error = Errors.unauthorized()
+            //     res.status(error.status).json(error)
+            //     return;
+            // }
         })
     }
 });
