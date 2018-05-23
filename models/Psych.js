@@ -1,6 +1,6 @@
 const User = require('./User')
 
-class Psych {
+class Psych extends User{
     constructor(email, password, firstname, lastname, location){
         super(email, password, firstname, lastname)
         this.location = location
