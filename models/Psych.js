@@ -1,7 +1,14 @@
 const User = require('./User')
+const Errors = require('./Errors');
 
 class Psych extends User{
     constructor(email, password, firstname, lastname, location){
+        if(!(
+            location && /^[A-Za-z]{2,25}/.test(location)
+        )) {
+            return new Errors.badRequest();
+        }
+
         super(email, password, firstname, lastname)
         this.location = location
         this.clients = []

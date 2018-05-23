@@ -1,21 +1,27 @@
 const User = require('./User')
 
 class Client extends User {
-    constructor(email, password, firstname, lastname, phonenumber, dob, city, address, postal){
+    constructor(email, password, firstname, lastname, phonenumber, dob, city, address, zipCode){
+        if (!(
+            dob &&
+            city && /^[A-Za-z]{2,25}/.test(city) &&
+            address && /^([A-Za-z'\-]+\s)*\d+([A-Z-a-z]*)/.test(address)
+        )){}
+
         super(email, password, firstname, lastname, phonenumber)
         this.dob = dob
         this.city = city
         this.address = address
-        this.postal = postal
+        this.zipCode = zipCode
         this.psych = null
     }
 
-    constructor(email, password, firstname, lastname, phonenumber, dob, city, address, postal, psych){
+    constructor(email, password, firstname, lastname, phonenumber, dob, city, address, zipCode, psych){
         super(email, password, firstname, lastname, phonenumber)
         this.dob = dob
         this.city = city
         this.address = address
-        this.postal = postal
+        this.zipCode = zipCode
         this.psych = psych
     }
 
@@ -43,12 +49,12 @@ class Client extends User {
         this.address = address
     }
 
-    get postal(){
-        return this.postal
+    get zipCode(){
+        return this.zipCode
     }
 
-    set postal(postal){
-        this.postal = postal
+    set zipCode(zipCode){
+        this.zipCode = zipCode
     }
 
     get psych(){
