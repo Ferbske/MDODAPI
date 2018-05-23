@@ -11,7 +11,8 @@ class Client {
             phonenumber &&
             dob &&
             city && /^[A-Za-z]{2,25}/.test(city) &&
-            address && /^([A-Za-z'\-]+\s)*\d+([A-Z-a-z]*)/.test(address)
+            address && /^([A-Za-z'\-]+\s)*\d+([A-Z-a-z]*)/.test(address) &&
+            zipCode && /^\d{4}\s?[A-Za-z]{2}/.test(zipCode)
         )){
             return Errors.badRequest();
         }
