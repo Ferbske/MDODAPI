@@ -11,16 +11,16 @@ router.post("/login/:role", (req, res) => {
     let password = req.body.password || '';
 
     if (role === 'psychologist') {
-        db.query("SELECT * FROM mdod.Psychologist;", function (err, rows, fields) {
+        db.query("SELECT email, password FROM mdod.Psychologist WHERE email = ?", [email], function (err, rows, fields) {
             if (err) {
                 res.status(500).json(err)
                 return;
             }
-            console.log(rows);
+            console.log(rows[0]);
 
             if (rows.length < 1) {
                 let error = Errors.notFound()
-                res.status(error.status).json(error)
+                res.status(error.code).json(error)
                 return;
             }
 
@@ -31,13 +31,38 @@ router.post("/login/:role", (req, res) => {
                     "status": 200,
                     "parameters": res.body
                 });
+            } else {
+                let error = Errors.unauthorized()
+                res.status(error.code).json(error)
+                return;
             }
-            res.status(200).json({"message" : "hoi"})
-            // else {
-            //     let error = Errors.unauthorized()
-            //     res.status(error.status).json(error)
-            //     return;
-            // }
+        })
+    }else if(role == 'client'){
+        db.query("SELECT email, password FROM mdod.Client WHERE email = ?", [email], function (err, rows, fields) {
+            if (err) {
+                res.status(500).json(err)
+                return;
+            }
+            console.log(rows[0]);
+
+            if (rows.length < 1) {
+                let error = Errors.notFound()
+                res.status(error.code).json(error)
+                return;
+            }
+
+            if (email == rows[0].email && password == rows[0].password) {
+                var token = auth.encodeToken(email);
+                res.status(200).json({
+                    "token": 'Bearer ' + token,
+                    "status": 200,
+                    "parameters": res.body
+                });
+            } else {
+                let error = Errors.unauthorized()
+                res.status(error.code).json(error)
+                return;
+            }
         })
     }
 });
