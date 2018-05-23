@@ -1,30 +1,30 @@
-const User = require('./User')
+const Errors = require('./Errors');
 
-class Client extends User {
-    constructor(email, password, firstname, lastname, dob){
-        super(email, password, firstname, lastname)
-        this.dob = dob
-    }
-
-    constructor(email, password, firstname, lastname, dob, psych){
-        super(email, password, firstname, lastname)
-        this.dob = dob
-        this.psych = psych
-    }
-
-    get dob(){
-        return this.dob
-    }
-
-    set dob(dob){
-        this.dob = dob
-    }
-
-    get psych(){
-        return this.psych
-    }
-
-    set psych(psych){
-        this.psych = psych
+class Client {
+    constructor(email, password, firstname, lastname, phonenumber, dob, city, address, zipCode){
+        if (!(
+            email && /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]/.test(email) &&
+            password && /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,80}$/.test(password) &&
+            firstname && /^[A-Za-z]{2,50}$/.test(firstname) &&
+            (infix === "" || infix && /^[A-Za-z]{2,8}(\s[A-Z-a-z]{2,8})*/.test(infix)) &&
+            lastname && /^[A-Za-z]{2,50}$/.test(lastname) &&
+            phonenumber &&
+            dob &&
+            city && /^[A-Za-z]{2,25}/.test(city) &&
+            address && /^([A-Za-z'\-]+\s)*\d+([A-Z-a-z]*)/.test(address)
+        )){
+            return Errors.badRequest();
+        }
+        this._email = email;
+        this._password = password;
+        this._firstname = firstname;
+        this._lastname = lastname;
+        this._dob = dob;
+        this._city = city;
+        this._address = address;
+        this._zipCode = zipCode;
+        this._psychologist = null;
     }
 }
+
+module.exports = Client;
