@@ -43,7 +43,6 @@ router.post("/login/:role", (req, res) => {
                 res.status(500).json(err)
                 return;
             }
-            console.log(rows[0]);
 
             if (rows.length < 1) {
                 let error = Errors.notFound()
