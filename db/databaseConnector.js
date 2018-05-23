@@ -18,7 +18,7 @@ const db = mysql.createConnection({
 });
 
 db.connect((error) => {
-    console.log(error ? error : `Connected to ${dbConfig.host}:${dbConfig.name}`);
+    console.log(error ? error : `Connected to ${dbConfig.host}:${dbConfig.name || config.database.schema}`);
 });
 
 module.exports = db;

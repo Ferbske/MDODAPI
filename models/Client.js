@@ -1,63 +1,30 @@
-const User = require('./User')
+const Errors = require('./Errors');
 
-class Client extends User {
-    constructor(email, password, firstname, lastname, phonenumber, dob, city, address, postal){
-        super(email, password, firstname, lastname, phonenumber)
-        this.dob = dob
-        this.city = city
-        this.address = address
-        this.postal = postal
-        this.psych = null
-    }
-
-    constructor(email, password, firstname, lastname, phonenumber, dob, city, address, postal, psych){
-        super(email, password, firstname, lastname, phonenumber)
-        this.dob = dob
-        this.city = city
-        this.address = address
-        this.postal = postal
-        this.psych = psych
-    }
-
-    get dob(){
-        return this.dob
-    }
-
-    set dob(dob){
-        this.dob = dob
-    }
-
-    get city(){
-        return this.city
-    }
-
-    set city(city){
-        this.city = city
-    }
-
-    get address(){
-        return this.address
-    }
-
-    set address(address){
-        this.address = address
-    }
-
-    get postal(){
-        return this.postal
-    }
-
-    set postal(postal){
-        this.postal = postal
-    }
-
-    get psych(){
-        return this.psych
-    }
-
-    set psych(psych){
-        this.psych = psych
+class Client {
+    constructor(email, password, firstname, lastname, phonenumber, dob, city, address, zipCode){
+        if (!(
+            email && /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]/.test(email) &&
+            password && /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,80}$/.test(password) &&
+            firstname && /^[A-Za-z]{2,50}$/.test(firstname) &&
+            (infix === "" || infix && /^[A-Za-z]{2,8}(\s[A-Z-a-z]{2,8})*/.test(infix)) &&
+            lastname && /^[A-Za-z]{2,50}$/.test(lastname) &&
+            phonenumber &&
+            dob &&
+            city && /^[A-Za-z]{2,25}/.test(city) &&
+            address && /^([A-Za-z'\-]+\s)*\d+([A-Z-a-z]*)/.test(address)
+        )){
+            return Errors.badRequest();
+        }
+        this._email = email;
+        this._password = password;
+        this._firstname = firstname;
+        this._lastname = lastname;
+        this._dob = dob;
+        this._city = city;
+        this._address = address;
+        this._zipCode = zipCode;
+        this._psychologist = null;
     }
 }
 
-module.exports = Client
+module.exports = Client;
