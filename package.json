@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/NiekFlipse97/MDODAPI#readme",
   "dependencies": {
+    "bcrypt": "^2.0.1",
     "body-parser": "^1.18.3",
     "chai": "^4.1.2",
     "chai-http": "^4.0.0",
