@@ -70,6 +70,15 @@ class Errors {
     static notFound() {
         return new Error("Not Found", 404);
     }
+
+    /**
+     * The 520 error is used as a "catch-all response for when the origin server returns something unexpected",
+     * listing connection resets, large headers, and empty or invalid responses as common triggers.
+     * @returns {Error}
+     */
+    static unknownError() {
+        return new Error("Unknown Error", 520);
+    }
 }
 
 module.exports = Errors;
