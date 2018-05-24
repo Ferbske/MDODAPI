@@ -26,18 +26,26 @@ router.post("/login/:role", (req, res) => {
                 return;
             }
 
-            if (email == rows[0].email && password == rows[0].password) {
-                var token = auth.encodeToken(email);
-                res.status(200).json({
-                    "token": token,
-                    "status": 200,
-                    "parameters": res.body
-                });
-            } else {
-                let error = Errors.unauthorized()
-                res.status(error.code).json(error)
-                return;
-            }
+            bcrypt.compare(password, rows[0].password, (err, result) => {
+                if (err) {
+                    res.json(err);
+                    return;
+                }
+
+                if (email === rows[0].email && result) {
+                    let token = auth.encodeToken(email);
+                    res.status(200).json({
+                        "token": token,
+                        "status": 200,
+                        "parameters": res.body
+                    });
+                } else {
+                    let error = Errors.unauthorized()
+                    res.status(error.code).json(error)
+                    return;
+                }
+            });
+
         })
     }else if(role == 'client'){
         db.query("SELECT email, password FROM mdod.Client WHERE email = ?", [email], function (err, rows, fields) {
@@ -52,18 +60,24 @@ router.post("/login/:role", (req, res) => {
                 return;
             }
 
-            if (email == rows[0].email && password == rows[0].password) {
-                var token = auth.encodeToken(email);
-                res.status(200).json({
-                    "token": token,
-                    "status": 200,
-                    "parameters": res.body
-                });
-            } else {
-                let error = Errors.unauthorized()
-                res.status(error.code).json(error)
-                return;
-            }
+            bcrypt.compare(password, rows[0].password, (err, result) => {
+                if (err) {
+                    res.json(err);
+                }
+
+                if (email === rows[0].email && result) {
+                    let token = auth.encodeToken(email);
+                    res.status(200).json({
+                        "token": token,
+                        "status": 200,
+                        "parameters": res.body
+                    });
+                } else {
+                    let error = Errors.unauthorized()
+                    res.status(error.code).json(error)
+                    return;
+                }
+            });
         })
     }
 });
