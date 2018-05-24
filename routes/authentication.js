@@ -5,6 +5,7 @@ const db = require('../db/databaseConnector');
 const Errors = require('../models/Errors');
 const Psychologist = require('../models/Psych');
 const Client = require('../models/Client');
+const bcrypt = require('bcrypt');
 
 router.post("/login/:role", (req, res) => {
     let role = req.params.role;
@@ -25,18 +26,26 @@ router.post("/login/:role", (req, res) => {
                 return;
             }
 
-            if (email == rows[0].email && password == rows[0].password) {
-                var token = auth.encodeToken(email);
-                res.status(200).json({
-                    "token": token,
-                    "status": 200,
-                    "parameters": res.body
-                });
-            } else {
-                let error = Errors.unauthorized()
-                res.status(error.code).json(error)
-                return;
-            }
+            bcrypt.compare(password, rows[0].password, (err, result) => {
+                if (err) {
+                    res.json(err);
+                    return;
+                }
+
+                if (email === rows[0].email && result) {
+                    let token = auth.encodeToken(email);
+                    res.status(200).json({
+                        "token": token,
+                        "status": 200,
+                        "parameters": res.body
+                    });
+                } else {
+                    let error = Errors.unauthorized()
+                    res.status(error.code).json(error)
+                    return;
+                }
+            });
+
         })
     }else if(role == 'client'){
         db.query("SELECT email, password FROM mdod.Client WHERE email = ?", [email], function (err, rows, fields) {
@@ -51,18 +60,24 @@ router.post("/login/:role", (req, res) => {
                 return;
             }
 
-            if (email == rows[0].email && password == rows[0].password) {
-                var token = auth.encodeToken(email);
-                res.status(200).json({
-                    "token": token,
-                    "status": 200,
-                    "parameters": res.body
-                });
-            } else {
-                let error = Errors.unauthorized()
-                res.status(error.code).json(error)
-                return;
-            }
+            bcrypt.compare(password, rows[0].password, (err, result) => {
+                if (err) {
+                    res.json(err);
+                }
+
+                if (email === rows[0].email && result) {
+                    let token = auth.encodeToken(email);
+                    res.status(200).json({
+                        "token": token,
+                        "status": 200,
+                        "parameters": res.body
+                    });
+                } else {
+                    let error = Errors.unauthorized()
+                    res.status(error.code).json(error)
+                    return;
+                }
+            });
         })
     }
 });
@@ -75,6 +90,7 @@ router.post("/register/:role", (req, res) => {
     const infix = req.body.infix || "";
     const lastname = req.body.lastname || "";
     const phonenumber = req.body.phonenumber || "";
+    const saltRounds = 10;
 
     if (req.params.role === "psychologist") {
         // Define the properties for a psychologist (Sub class).
@@ -85,28 +101,32 @@ router.post("/register/:role", (req, res) => {
         if (psychologist._email) {
             const name = infix ? `${firstname} ${infix} ${lastname}` : `${firstname} ${lastname}`;
 
-            db.query("SELECT email FROM mdod.Psychologist WHERE email = ?", [email], (error, rows, fields) => {
-                if (error) {
-                    const err = Errors.unknownError();
-                    res.status(err.code).json(err);
-                    return;
-                }
+            bcrypt.genSalt(saltRounds, function(err, salt) {
+                bcrypt.hash(password, salt, function (err, hash) {
+                    db.query("SELECT email FROM mdod.Psychologist WHERE email = ?", [email], (error, rows, fields) => {
+                        if (error) {
+                            const err = Errors.unknownError();
+                            res.status(err.code).json(err);
+                            return;
+                        }
 
-                if (rows.length > 0) {
-                    const error = Errors.conflict();
-                    res.status(error.code).json(error);
-                    return;
-                }
+                        if (rows.length > 0) {
+                            const error = Errors.conflict();
+                            res.status(error.code).json(error);
+                            return;
+                        }
 
-                db.query("INSERT INTO mdod.Psychologist VALUES(?, ?, ?, ?, ?)", [name, email, password, phonenumber, location], (error, result) => {
-                    if (error) {
-                        const err = Errors.conflict();
-                        res.status(err.code).json(error)
-                    }
+                        db.query("INSERT INTO mdod.Psychologist VALUES(?, ?, ?, ?, ?)", [name, email, hash, phonenumber, location], (error, result) => {
+                            if (error) {
+                                const err = Errors.conflict();
+                                res.status(err.code).json(error)
+                            }
 
-                    res.status(201).json({
-                        message: "Psycholoog aangemaakt"
-                    })
+                            res.status(201).json({
+                                message: "Psycholoog aangemaakt"
+                            })
+                        })
+                    });
                 })
             });
         } else {
@@ -125,35 +145,37 @@ router.post("/register/:role", (req, res) => {
         if(client._email) {
             const name = infix ? `${firstname} ${infix} ${lastname}` : `${firstname} ${lastname}`;
 
-            db.query("SELECT email FROM mdod.Client WHERE email = ?", [email], (error, rows, fields) => {
-                if (error) {
-                    const err = Errors.unknownError();
-                    res.status(err.code).json(err);
-                    return;
-                }
+            bcrypt.genSalt(saltRounds, function (err, salt) {
+                bcrypt.hash(password, salt, function (err, hash) {
+                    db.query("SELECT email FROM mdod.Client WHERE email = ?", [email], (error, rows, fields) => {
+                        if (error) {
+                            const err = Errors.unknownError();
+                            res.status(err.code).json(err);
+                            return;
+                        }
 
-                if (rows.length > 0) {
-                    const error = Errors.conflict();
-                    res.status(error.code).json(error);
-                    return;
-                }
+                        if (rows.length > 0) {
+                            const error = Errors.conflict();
+                            res.status(error.code).json(error);
+                            return;
+                        }
 
-                db.query("INSERT INTO mdod.Client VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [email, null, name, password, phonenumber, dob, city, address, zipCode], (error, result) => {
-                    if (error) {
-                        const err = Errors.conflict();
-                        res.status(err.code).json(error)
-                    }
+                        db.query("INSERT INTO mdod.Client VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [email, null, name, hash, phonenumber, dob, city, address, zipCode], (error, result) => {
+                            if (error) {
+                                const err = Errors.conflict();
+                                res.status(err.code).json(error)
+                            }
 
-                    res.status(201).json({
-                        message: "Client aangemaakt"
-                    })
-                })
+                            res.status(201).json({
+                                message: "Client aangemaakt"
+                            })
+                        })
+                    });
+                });
             });
-
         } else {
             res.status(client.code).json(client);
         }
-
     }
 
 });

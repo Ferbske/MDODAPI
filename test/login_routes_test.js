@@ -14,7 +14,7 @@ describe('Login', function(){
             .set('Content-Type', 'application/json')
             .send({
                 "email": "sam@gmail.com",
-                "password": "wachtwoord"
+                "password": "qwerty123"
             })
             .end((err, res) => {
                 res.should.have.status(200);
@@ -30,8 +30,8 @@ describe('Login', function(){
             .post('/api/login/psychologist')
             .set('Content-Type', 'application/json')
             .send({
-                "email": "stijnboz@live.nl",
-                "password": "wachtwoord"
+                "email": "stijn@gmail.com",
+                "password": "qwerty123"
             })
             .end((err, res) => {
                 res.should.have.status(200);
@@ -92,7 +92,7 @@ describe('Login', function(){
             .post('/api/login')
             .set('Content-Type', 'application/json')
             .send({
-                "email": "stijnboz@live.nl",
+                "email": "stijn@gmail.com",
                 "password": "wrongPassword"
             })
             .end((err, res) => {
