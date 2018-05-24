@@ -12,26 +12,27 @@ router.post("/login/:role", (req, res) => {
     let email = req.body.email || '';
     let password = req.body.password || '';
 
+    // If the requested user is a psychologist.
     if (role === 'psychologist') {
+        // Checks if the provided email exists in the database.
         db.query("SELECT email, password FROM mdod.Psychologist WHERE email = ?", [email], function (err, rows, fields) {
             if (err) {
-                res.status(500).json(err)
+                res.status(500).json(err);
                 return;
             }
-            console.log(rows[0]);
-
+            // Checks if the database gave back a valid return, if not, return error not found.
             if (rows.length < 1) {
-                let error = Errors.notFound()
-                res.status(error.code).json(error)
+                let error = Errors.notFound();
+                res.status(error.code).json(error);
                 return;
             }
-
+            // Compares the provided password with the password in the database.
             bcrypt.compare(password, rows[0].password, (err, result) => {
                 if (err) {
                     res.json(err);
                     return;
                 }
-
+                // Checks the email as well as an extra check, if correct return a token and HTTP 200. Else return a unauthorized code.
                 if (email === rows[0].email && result) {
                     let token = auth.encodeToken(email);
                     res.status(200).json({
@@ -40,31 +41,33 @@ router.post("/login/:role", (req, res) => {
                         "parameters": res.body
                     });
                 } else {
-                    let error = Errors.unauthorized()
-                    res.status(error.code).json(error)
-                    return;
+                    let error = Errors.unauthorized();
+                    res.status(error.code).json(error);
                 }
             });
 
         })
-    }else if(role == 'client'){
+    }
+    // If the requested user is a client.
+    else if(role === 'client'){
+        // Checks if the provided email exists in the database.
         db.query("SELECT email, password FROM mdod.Client WHERE email = ?", [email], function (err, rows, fields) {
             if (err) {
-                res.status(500).json(err)
+                res.status(500).json(err);
                 return;
             }
-
+            // Checks if the database gave back a valid return, if not, return error not found.
             if (rows.length < 1) {
-                let error = Errors.notFound()
-                res.status(error.code).json(error)
+                let error = Errors.notFound();
+                res.status(error.code).json(error);
                 return;
             }
-
+            // Compares the provided password with the password in the database.
             bcrypt.compare(password, rows[0].password, (err, result) => {
                 if (err) {
                     res.json(err);
                 }
-
+                // Checks the email as well as an extra check, if correct return a token and HTTP 200. Else return a unauthorized code.
                 if (email === rows[0].email && result) {
                     let token = auth.encodeToken(email);
                     res.status(200).json({
@@ -73,9 +76,8 @@ router.post("/login/:role", (req, res) => {
                         "parameters": res.body
                     });
                 } else {
-                    let error = Errors.unauthorized()
-                    res.status(error.code).json(error)
-                    return;
+                    let error = Errors.unauthorized();
+                    res.status(error.code).json(error);
                 }
             });
         })
