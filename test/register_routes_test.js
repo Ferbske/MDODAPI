@@ -11,7 +11,7 @@ chai.use(chaiHttp);
 
 describe('Registration', function () {
     this.timeout(10000);
-    it('PSYCHOLOGIST: should return a 200 status when providing valid information', (done) => {
+    it('PSYCHOLOGIST: should return a 201 status when providing valid information', (done) => {
         chai.request(index)
             .post('/api/register/psychologist')
             .set('Content-Type', 'application/json')
