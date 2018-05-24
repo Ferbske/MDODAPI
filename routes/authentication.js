@@ -85,18 +85,30 @@ router.post("/register/:role", (req, res) => {
         if (psychologist._email) {
             const name = infix ? `${firstname} ${infix} ${lastname}` : `${firstname} ${lastname}`;
 
-            // TODO: Check if psychologist already exists
-
-            db.query("INSERT INTO mdod.Psychologist VALUES(?, ?, ?, ?, ?)", [name, email, password, phonenumber, location], (error, result) => {
+            db.query("SELECT email FROM mdod.Psychologist WHERE email = ?", [email], (error, rows, fields) => {
                 if (error) {
-                    const err = Errors.conflict();
-                    res.status(err.code).json(error)
+                    const err = Errors.unknownError();
+                    res.status(err.code).json(err);
+                    return;
                 }
 
-                res.status(201).json({
-                    message: "Psycholoog aangemaakt"
+                if (rows.length > 0) {
+                    const error = Errors.conflict();
+                    res.status(error.code).json(error);
+                    return;
+                }
+
+                db.query("INSERT INTO mdod.Psychologist VALUES(?, ?, ?, ?, ?)", [name, email, password, phonenumber, location], (error, result) => {
+                    if (error) {
+                        const err = Errors.conflict();
+                        res.status(err.code).json(error)
+                    }
+
+                    res.status(201).json({
+                        message: "Psycholoog aangemaakt"
+                    })
                 })
-            })
+            });
         } else {
             res.status(psychologist.code).json(psychologist);
         }
@@ -104,11 +116,44 @@ router.post("/register/:role", (req, res) => {
     } else if (req.params.role === "client") {
         // Define the properties for a client (Sub class).
         const dob = req.body.dob || "";
-        const ciy = req.body.city || "";
-        const address = req.body.address || "";
+        const city = req.body.city || "";
+        const address = req.body.adress || "";
         const zipCode = req.body.zipcode || "";
 
-        // TODO: Create client register
+        const client = new Client(email, password, firstname, infix, lastname, phonenumber, dob, city, address, zipCode);
+
+        if(client._email) {
+            const name = infix ? `${firstname} ${infix} ${lastname}` : `${firstname} ${lastname}`;
+
+            db.query("SELECT email FROM mdod.Client WHERE email = ?", [email], (error, rows, fields) => {
+                if (error) {
+                    const err = Errors.unknownError();
+                    res.status(err.code).json(err);
+                    return;
+                }
+
+                if (rows.length > 0) {
+                    const error = Errors.conflict();
+                    res.status(error.code).json(error);
+                    return;
+                }
+
+                db.query("INSERT INTO mdod.Client VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [email, null, name, password, phonenumber, dob, city, address, zipCode], (error, result) => {
+                    if (error) {
+                        const err = Errors.conflict();
+                        res.status(err.code).json(error)
+                    }
+
+                    res.status(201).json({
+                        message: "Client aangemaakt"
+                    })
+                })
+            });
+
+        } else {
+            res.status(client.code).json(client);
+        }
+
     }
 
 });
