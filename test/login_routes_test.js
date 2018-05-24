@@ -1,6 +1,6 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const server = require('../index');
+const index = require('../index');
 
 chai.should();
 chai.use(chaiHttp);
@@ -14,7 +14,7 @@ describe('Login', function(){
             .set('Content-Type', 'application/json')
             .send({
                 "email": "sam@gmail.com",
-                "password": "wachtwoord3"
+                "password": "wachtwoord"
             })
             .end((err, res) => {
                 res.should.have.status(200);
