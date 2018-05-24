@@ -14,7 +14,7 @@ describe('Login', function(){
             .set('Content-Type', 'application/json')
             .send({
                 "email": "sam@gmail.com",
-                "password": "wachtwoord3"
+                "password": "wachtwoord"
             })
             .end((err, res) => {
                 res.should.have.status(200);
