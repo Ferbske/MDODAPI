@@ -10,9 +10,9 @@ class Client {
             lastname && /^[A-Za-z]{2,50}$/.test(lastname) &&
             (phonenumber === "" || phonenumber && phonenumber.length < 14 && /^\+?\d{6,13}/.test(phonenumber))&&
             dob &&
-            city && /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/.test(city) &&
-            address && /^([A-Za-z'\-]+\s)+\d+([A-Z-a-z]*)/.test(address) &&
-            zipCode && /^\d{4}\s?[A-Za-z]{2}/.test(zipCode)
+            (city === "" || city && /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/.test(city)) &&
+            (address === "" || address && /^([A-Za-z'\-]+\s)*\d+([A-Z-a-z]*)/.test(address)) &&
+            (zipCode === "" || zipCode && /^\d{4}\s?[A-Za-z]{2}/.test(zipCode))
         )){
             return Errors.badRequest();
         }
