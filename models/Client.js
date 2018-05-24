@@ -1,7 +1,7 @@
 const Errors = require('./Errors');
 
 class Client {
-    constructor(email, password, firstname, lastname, phonenumber, dob, city, address, zipCode){
+    constructor(email, password, firstname, infix, lastname, phonenumber, dob, city, address, zipCode){
         if (!(
             email && /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]/.test(email) &&
             password && /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,80}$/.test(password) &&
@@ -11,7 +11,8 @@ class Client {
             phonenumber &&
             dob &&
             city && /^[A-Za-z]{2,25}/.test(city) &&
-            address && /^([A-Za-z'\-]+\s)*\d+([A-Z-a-z]*)/.test(address)
+            address && /^([A-Za-z'\-]+\s)*\d+([A-Z-a-z]*)/.test(address) &&
+            zipCode && /^\d{4}\s?[A-Za-z]{2}/.test(zipCode)
         )){
             return Errors.badRequest();
         }
