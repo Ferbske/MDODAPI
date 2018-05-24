@@ -85,7 +85,7 @@ router.post("/login/:role", (req, res) => {
 });
 
 router.post("/register/:role", (req, res) => {
-    // Define the properties for a user. (Super class).
+    // Define the properties for a user.
     const email = req.body.email || "";
     const password = req.body.password ||"";
     const firstname = req.body.firstname || "";
@@ -94,17 +94,26 @@ router.post("/register/:role", (req, res) => {
     const phonenumber = req.body.phonenumber || "";
     const saltRounds = 10;
 
+    // If the registered user is a psychologist.
     if (req.params.role === "psychologist") {
-        // Define the properties for a psychologist (Sub class).
+        // Define the properties for a psychologist.
         const location = req.body.location || "";
 
+        // Create a new Psychologist. If the validation of this user fails this object contains an error message.
         const psychologist = new Psychologist(email, password, firstname, infix, lastname, location, phonenumber);
 
+        // Check if the psychologist a valid psychologists is, and not the error message.
         if (psychologist._email) {
+            // The name of the psychologist will be created.
             const name = infix ? `${firstname} ${infix} ${lastname}` : `${firstname} ${lastname}`;
 
+            // Generate a salt for the hash method.
             bcrypt.genSalt(saltRounds, function(err, salt) {
+
+                // Hash the plain text password to a bcrypt hash.
                 bcrypt.hash(password, salt, function (err, hash) {
+
+                    // Check if the email address already exists in the database.
                     db.query("SELECT email FROM mdod.Psychologist WHERE email = ?", [email], (error, rows, fields) => {
                         if (error) {
                             const err = Errors.unknownError();
@@ -112,12 +121,14 @@ router.post("/register/:role", (req, res) => {
                             return;
                         }
 
+                        // If the email address exists. return a conflict error.
                         if (rows.length > 0) {
                             const error = Errors.conflict();
                             res.status(error.code).json(error);
                             return;
                         }
 
+                        // If the email doesn't exists in the database, insert it.
                         db.query("INSERT INTO mdod.Psychologist VALUES(?, ?, ?, ?, ?)", [name, email, hash, phonenumber, location], (error, result) => {
                             if (error) {
                                 const err = Errors.conflict();
@@ -132,9 +143,11 @@ router.post("/register/:role", (req, res) => {
                 })
             });
         } else {
+            // If the psychologist is not a real psychologist but the error method.
             res.status(psychologist.code).json(psychologist);
         }
 
+        // If the role is a client.
     } else if (req.params.role === "client") {
         // Define the properties for a client (Sub class).
         const dob = req.body.dob || "";
@@ -142,13 +155,22 @@ router.post("/register/:role", (req, res) => {
         const address = req.body.adress || "";
         const zipCode = req.body.zipcode || "";
 
+        // Create a new Client. If the validation fails, the client becomes an error message.
         const client = new Client(email, password, firstname, infix, lastname, phonenumber, dob, city, address, zipCode);
 
+        // If the client is a real client, and not the error message.
         if(client._email) {
+
+            // Create name for client.
             const name = infix ? `${firstname} ${infix} ${lastname}` : `${firstname} ${lastname}`;
 
+            // Generate salt.
             bcrypt.genSalt(saltRounds, function (err, salt) {
+
+                // Hash password.
                 bcrypt.hash(password, salt, function (err, hash) {
+
+                    // Check if user already exists
                     db.query("SELECT email FROM mdod.Client WHERE email = ?", [email], (error, rows, fields) => {
                         if (error) {
                             const err = Errors.unknownError();
@@ -156,12 +178,14 @@ router.post("/register/:role", (req, res) => {
                             return;
                         }
 
+                        // If user exists. return conflict error.
                         if (rows.length > 0) {
                             const error = Errors.conflict();
                             res.status(error.code).json(error);
                             return;
                         }
 
+                        // If the user doesn't exist. Insert it.
                         db.query("INSERT INTO mdod.Client VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [email, null, name, hash, phonenumber, dob, city, address, zipCode], (error, result) => {
                             if (error) {
                                 const err = Errors.conflict();
@@ -176,6 +200,7 @@ router.post("/register/:role", (req, res) => {
                 });
             });
         } else {
+            // If the user object contains the error message.
             res.status(client.code).json(client);
         }
     }
