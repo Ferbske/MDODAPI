@@ -9,8 +9,8 @@ class Psychologist{
             (infix === "" || infix && /^[A-Za-z]{2,8}(\s[A-Z-a-z]{2,8})*/.test(infix)) &&
             lastname && /^[A-Za-z]{2,50}$/.test(lastname) &&
             (phonenumber === "" || phonenumber && phonenumber.length < 14 && /^\+?\d{6,13}/.test(phonenumber))&&
-            location && /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/.test(location)
-        )) {
+            (location === "" || location && /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/.test(location))
+)) {
             return Errors.badRequest();
         }
 
