@@ -157,10 +157,6 @@ router.post("/register/:role", (req, res) => {
 
         // If the client is a real client, and not the error message.
         if(client._email) {
-
-            // Create name for client.
-            const name = infix ? `${firstname} ${infix} ${lastname}` : `${firstname} ${lastname}`;
-
             // Generate salt.
             bcrypt.genSalt(saltRounds, function (err, salt) {
 
@@ -183,7 +179,7 @@ router.post("/register/:role", (req, res) => {
                         }
 
                         // If the user doesn't exist. Insert it.
-                        db.query("INSERT INTO mdod.Client VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [email, null, name, hash, phonenumber, dob, city, address, zipCode], (error, result) => {
+                        db.query("INSERT INTO mdod.Client VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [email, null, hash, phonenumber, dob, city, address, zipCode, firstname, infix, lastname], (error, result) => {
                             if (error) {
                                 const err = Errors.conflict();
                                 res.status(err.code).json(error)
