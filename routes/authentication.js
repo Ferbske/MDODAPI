@@ -120,7 +120,7 @@ router.post("/register/:role", (req, res) => {
 
                         // If the email address exists. return a conflict error.
                         if (rows.length > 0) {
-                            const error = Errors.conflict();
+                            const error = Errors.userExists();
                             res.status(error.code).json(error);
                             return;
                         }
@@ -173,7 +173,7 @@ router.post("/register/:role", (req, res) => {
 
                         // If user exists. return conflict error.
                         if (rows.length > 0) {
-                            const error = Errors.conflict();
+                            const error = Errors.userExists();
                             res.status(error.code).json(error);
                             return;
                         }
@@ -182,7 +182,8 @@ router.post("/register/:role", (req, res) => {
                         db.query("INSERT INTO mdod.Client VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [email, null, hash, phonenumber, dob, city, address, zipCode, firstname, infix, lastname], (error, result) => {
                             if (error) {
                                 const err = Errors.conflict();
-                                res.status(err.code).json(error)
+                                res.status(err.code).json(error);
+                                return;
                             }
 
                             res.status(201).json({
