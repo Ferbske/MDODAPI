@@ -173,7 +173,7 @@ router.post("/register/:role", (req, res) => {
 
                         // If user exists. return conflict error.
                         if (rows.length > 0) {
-                            const error = Errors.conflict();
+                            const error = Errors.userExists();
                             res.status(error.code).json(error);
                             return;
                         }
