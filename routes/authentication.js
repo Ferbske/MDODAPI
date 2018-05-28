@@ -207,4 +207,65 @@ router.post("/register/:role", (req, res) => {
 
 });
 
+router.get('/:role', (req, res) => {
+    const token = (req.header('X-Access-Token')) || '';
+    const role = req.params.role;
+    if (role === 'client') {
+        const data = auth.decodeToken(token, (err, payload) =>{
+            if(err){
+                console.log('Error handler: ' + err.message);
+                let error = Errors.unauthorized();
+                res.status(error.code).json(error);
+            } else {
+                const email = payload.sub;
+                db.query("SELECT email, contact, firstname, infix, lastname, phonenumber, birthday, city, adress, zipcode FROM mdod.Client WHERE email = ?;", [email], (error, rows, field) => {
+                    if (error) {
+                        const err = Errors.unknownError();
+                        res.status(err.code).json(err);
+                        return;
+                    }
+                    if (rows.length > 0) {
+                        res.status(200).json(rows);
+                    }
+                });
+            }
+        });
+    } else if(role === 'psychologist'){
+
+    }
+});
+
+
+
+
+//@TODO this update endpoint
+router.post("/update/:role", (req, res) => {
+    const role = req.params.role;
+    if (role === 'client') {
+        const role = req.params.role;
+        const password = req.body.password ||"";
+        const firstname = req.body.firstname || "";
+        const infix = req.body.infix || "";
+        const lastname = req.body.lastname || "";
+        const phonenumber = req.body.phonenumber || "";
+        const dob = req.body.dob || "";
+        const city = req.body.city || "";
+        const address = req.body.adress || "";
+        const zipCode = req.body.zipcode || "";
+        const token = (req.header('X-Access-Token')) || '';
+
+        const data = auth.decodeToken(token, (err, payload) =>{
+            if(err){
+                console.log('Error handler: ' + err.message);
+                let error = Errors.unauthorized();
+                res.status(error.code).json(error);
+            } else {
+                console.log(payload);
+                res.status(200).json(payload);
+            }
+        });
+    }
+
+});
+
 module.exports = router;
