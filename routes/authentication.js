@@ -120,7 +120,7 @@ router.post("/register/:role", (req, res) => {
 
                         // If the email address exists. return a conflict error.
                         if (rows.length > 0) {
-                            const error = Errors.conflict();
+                            const error = Errors.userExists();
                             res.status(error.code).json(error);
                             return;
                         }
