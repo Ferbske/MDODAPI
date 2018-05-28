@@ -104,9 +104,6 @@ router.post("/register/:role", (req, res) => {
 
         // Check if the psychologist a valid psychologists is, and not the error message.
         if (psychologist._email) {
-            // The name of the psychologist will be created.
-            const name = infix ? `${firstname} ${infix} ${lastname}` : `${firstname} ${lastname}`;
-
             // Generate a salt for the hash method.
             bcrypt.genSalt(saltRounds, function(err, salt) {
 
@@ -129,7 +126,7 @@ router.post("/register/:role", (req, res) => {
                         }
 
                         // If the email doesn't exists in the database, insert it.
-                        db.query("INSERT INTO mdod.Psychologist VALUES(?, ?, ?, ?, ?)", [name, email, hash, phonenumber, location], (error, result) => {
+                        db.query("INSERT INTO mdod.Psychologist VALUES(?, ?, ?, ?, ?, ?, ?)", [email, hash, phonenumber, location, firstname, infix, lastname], (error, result) => {
                             if (error) {
                                 const err = Errors.conflict();
                                 res.status(err.code).json(error)
