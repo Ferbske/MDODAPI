@@ -1,15 +1,15 @@
 const Errors = require('./Errors');
 
-class Psychologist{
-    constructor(email, password, firstname, infix, lastname, location, phonenumber){
+class Psychologist {
+    constructor(email, password, firstname, infix, lastname, location, phonenumber) {
         if (!(
-            email && /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]/.test(email) &&
+            email && /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z-.]{2,20}/.test(email) &&
             password && /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,80}$/.test(password) &&
             firstname && /^[A-Za-z]{2,50}$/.test(firstname) &&
             (infix === "" || infix && /^[A-Za-z]{2,8}(\s[A-Z-a-z]{2,8})*/.test(infix)) &&
             lastname && /^[A-Za-z]{2,50}$/.test(lastname) &&
-            (phonenumber === "" || phonenumber && phonenumber.length < 14 && /^\+?\d{6,13}/.test(phonenumber))&&
-            location && /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/.test(location)
+            (phonenumber === "" || phonenumber && phonenumber.length < 14 && /^\+?\d{6,13}/.test(phonenumber)) &&
+            (location === "" || location && /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/.test(location))
         )) {
             return Errors.badRequest();
         }
