@@ -83,10 +83,10 @@ class Errors {
     /**
      * Unofficial HTTP Response.
      * This response is self reclaimed.
-     * @returns {Error} User already exists, 420
+     * @returns {Error} User Exists, 420
      */
     static userExists() {
-        return new Error("User already exists", 420);
+        return new Error("User Exists", 420);
     }
 }
 
