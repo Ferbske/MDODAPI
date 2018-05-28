@@ -217,6 +217,10 @@ router.get('/:role', (req, res) => {
                         const err = Errors.unknownError();
                         res.status(err.code).json(err);
                         return;
+                    }if (rows.length < 0){
+                        let error = Errors.notFound();
+                        res.status(error.code).json(error);
+                        return;
                     }
                     if (rows.length > 0) {
                         res.status(200).json(rows);
@@ -225,6 +229,32 @@ router.get('/:role', (req, res) => {
             }
         });
     } else if(role === 'psychologist'){
+        const data = auth.decodeToken(token, (err, payload) =>{
+            if(err){
+                console.log('Error handler: ' + err.message);
+                let error = Errors.unauthorized();
+                res.status(error.code).json(error);
+            } else {
+                const email = payload.sub;
+                // @TODO this query statement
+                db.query("SELECT * mdod.Psychologist WHERE email = ?;", [email], (error, rows, field) => {
+                    if (error) {
+                        const err = Errors.unknownError();
+                        res.status(err.code).json(err);
+                        return;
+                    }
+                    if (rows.length < 0){
+                        let error = Errors.notFound();
+                        res.status(error.code).json(error);
+                        return;
+                    }
+                    if (rows.length > 0) {
+                        res.status(200).json(rows);
+                    }
+
+                });
+            }
+        });
 
     }
 });
