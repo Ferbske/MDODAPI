@@ -236,10 +236,10 @@ router.get('/:role', (req, res) => {
                 res.status(error.code).json(error);
             } else {
                 const email = payload.sub;
-                // @TODO this query statement
-                db.query("SELECT * mdod.Psychologist WHERE email = ?;", [email], (error, rows, field) => {
+                db.query("SELECT email, firstname, infix, lastname, phonenumber, job_location FROM mdod.Psychologist WHERE email = ?;", [email], (error, rows, field) => {
                     if (error) {
                         const err = Errors.unknownError();
+                        console.log(error);
                         res.status(err.code).json(err);
                         return;
                     }
