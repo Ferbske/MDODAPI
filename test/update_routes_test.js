@@ -312,7 +312,7 @@ describe('Update ', function () {
             .set('X-Access-Token','eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
             .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
             .send({
-                "firstname": "Stein",
+                "firstname": "Stijn",
                 "infix": "",
                 "lastname": "veen",
                 "dob": "1996-11-27",
@@ -329,6 +329,5 @@ describe('Update ', function () {
     });
 
 
-    deleteClient();
 
 });

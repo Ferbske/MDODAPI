@@ -14,6 +14,7 @@ class Client {
             (address === "" || address && /^([A-Za-z'\-]+\s)+\d+([A-Z-a-z]*)/.test(address)) &&
             (zipCode === "" || zipCode && /^\d{4}\s?[A-Za-z]{2}/.test(zipCode))
         )) {
+            console.log("TEST");
             return Errors.badRequest();
         }
         this._email = email;

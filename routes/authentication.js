@@ -82,7 +82,7 @@ router.post("/login/:role", (req, res) => {
                 }
             });
         })
-    }else {
+    } else {
         const err = Errors.badRequest();
         res.status(err.code).json(err);
     }
@@ -200,7 +200,7 @@ router.post("/register/:role", (req, res) => {
             // If the user object contains the error message.
             res.status(client.code).json(client);
         }
-    }else {
+    } else {
         const err = Errors.badRequest();
         res.status(err.code).json(err);
     }
@@ -261,7 +261,7 @@ router.get('/:role', (req, res) => {
                 });
             }
         });
-    }else {
+    } else {
         const err = Errors.badRequest();
         res.status(err.code).json(err);
     }
@@ -297,14 +297,13 @@ router.put("/:role", (req, res) => {
                         }
                         res.status(202).json({message: "Client Aangepast"})
                     });
-                }else {
+                } else {
                     // If the user object contains the error message.
                     res.status(client.code).json(client);
                 }
             }
         });
-    }
-    if(role === 'psychologist'){
+    } else if (role === 'psychologist') {
         const password = "qwerty123";
         const firstname = req.body.firstname || "";
         const infix = req.body.infix || "";
@@ -317,6 +316,7 @@ router.put("/:role", (req, res) => {
                 console.log('Error handler: ' + err.message);
                 let error = Errors.noValidToken();
                 res.status(error.code).json(error);
+                return;
             } else {
                 const email = payload.sub;
                 const psychologist = new Psychologist(email, password, firstname, infix, lastname, location, phonenumber);
@@ -329,13 +329,13 @@ router.put("/:role", (req, res) => {
                         }
                         res.status(202).json({message: "Psycholoog Aangepast"})
                     });
-                }else {
+                } else {
                     // If the user object contains the error message.
                     res.status(psychologist.code).json(psychologist);
                 }
             }
-        })
-    }else {
+        });
+    } else {
         const err = Errors.badRequest();
         res.status(err.code).json(err);
     }
