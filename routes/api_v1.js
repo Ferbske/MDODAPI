@@ -58,9 +58,8 @@ router.route('/goals/:goalId?')
                 res.status(goal.code).json(goal);
             }
         });
-    });
-
-router.delete("/goals/:goalId", (req, res) => {
+    })
+    .delete((req, res) => {
     // Get the token from the request
     const token = req.header('X-Access-Token') || '';
 
