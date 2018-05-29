@@ -82,6 +82,9 @@ router.post("/login/:role", (req, res) => {
                 }
             });
         })
+    }else {
+        const err = Errors.badRequest();
+        res.status(err.code).json(err);
     }
 });
 
@@ -93,7 +96,6 @@ router.post("/register/:role", (req, res) => {
     const infix = req.body.infix || "";
     const lastname = req.body.lastname || "";
     const phonenumber = req.body.phonenumber || "";
-
 
     // If the registered user is a psychologist.
     if (req.params.role === "psychologist") {
@@ -198,6 +200,9 @@ router.post("/register/:role", (req, res) => {
             // If the user object contains the error message.
             res.status(client.code).json(client);
         }
+    }else {
+        const err = Errors.badRequest();
+        res.status(err.code).json(err);
     }
 
 });
@@ -209,7 +214,7 @@ router.get('/:role', (req, res) => {
         const data = auth.decodeToken(token, (err, payload) => {
             if (err) {
                 console.log('Error handler: ' + err.message);
-                let error = Errors.unauthorized();
+                let error = Errors.noValidToken();
                 res.status(error.code).json(error);
             } else {
                 const email = payload.sub;
@@ -234,7 +239,7 @@ router.get('/:role', (req, res) => {
         const data = auth.decodeToken(token, (err, payload) => {
             if (err) {
                 console.log('Error handler: ' + err.message);
-                let error = Errors.unauthorized();
+                let error = Errors.noValidToken();
                 res.status(error.code).json(error);
             } else {
                 const email = payload.sub;
@@ -256,13 +261,15 @@ router.get('/:role', (req, res) => {
                 });
             }
         });
-
+    }else {
+        const err = Errors.badRequest();
+        res.status(err.code).json(err);
     }
 });
 
 
 //@TODO this update endpoint
-router.post("/update/:role", (req, res) => {
+router.put("/:role", (req, res) => {
     const role = req.params.role;
     if (role === 'client') {
         const password = "qwerty123";
@@ -278,17 +285,16 @@ router.post("/update/:role", (req, res) => {
         const data = auth.decodeToken(token, (err, payload) => {
             if (err) {
                 console.log('Error handler: ' + err.message);
-                let error = Errors.unauthorized();
+                let error = Errors.noValidToken();
                 res.status(error.code).json(error);
             } else {
                 const email = payload.sub;
                 const client = new Client(email, password, firstname, infix, lastname, phonenumber, dob, city, address, zipCode);
-                console.log(client._email);
                 if (client._email) {
                     db.query("UPDATE mdod.Client SET phonenumber = ?, birthday = ?, city = ?, adress = ?, zipcode =?, firstname = ?, infix =?, lastname = ? WHERE email = ? ", [phonenumber, dob, city, address, zipCode, firstname, infix, lastname, email], (error, result) => {
                         if (error) {
                             const err = Errors.conflict();
-                            res.status(err.code).json(err.message);
+                            res.status(err.code).json(err);
                             return;
                         }
                         console.log(result);
@@ -298,6 +304,52 @@ router.post("/update/:role", (req, res) => {
             }
         });
     }
+    if(role === 'psychologist'){
+        const password = "qwerty123";
+        const firstname = req.body.firstname || "";
+        const infix = req.body.infix || "";
+        const lastname = req.body.lastname || "";
+        const phonenumber = req.body.phonenumber || "";
+        const location = req.body.location;
+        const token = (req.header('X-Access-Token')) || '';
+        const data = auth.decodeToken(token, (err, payload) => {
+            if (err) {
+                console.log('Error handler: ' + err.message);
+                let error = Errors.noValidToken();
+                res.status(error.code).json(error);
+            } else {
+                const email = payload.sub;
+                const psychologist = new Psychologist(email, password, firstname, infix, lastname, location, phonenumber);
+                if (psychologist._email) {
+                    db.query("UPDATE mdod.Psychologist SET phonenumber = ?, job_location = ?, firstname = ?, infix =?, lastname = ? WHERE email = ? ", [phonenumber, location, firstname, infix, lastname, email], (error, result) => {
+                        if (error) {
+                            const err = Errors.conflict();
+                            res.status(err.code).json(err);
+                            return;
+                        }
+                        console.log(result);
+                        res.status(202).json({message: "Psycholoog Aangepast"})
+                    });
+                }
+            }
+        })
+    }else {
+        const err = Errors.badRequest();
+        res.status(err.code).json(err);
+    }
 });
+
+router.delete("/:role", (req, res) => {
+    const role = req.params.role;
+    if (role === 'client') {
+
+    }
+    if (role === 'psychologist') {
+
+    } else {
+      const err = Errors.badRequest();
+      res.status(err.code).json(err);
+    }
+    });
 
 module.exports = router;
