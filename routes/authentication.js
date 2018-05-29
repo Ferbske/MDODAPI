@@ -267,8 +267,6 @@ router.get('/:role', (req, res) => {
     }
 });
 
-
-//@TODO this update endpoint
 router.put("/:role", (req, res) => {
     const role = req.params.role;
     if (role === 'client') {
@@ -350,24 +348,24 @@ router.delete("/:role", (req, res) => {
             res.status(error.code).json(error);
         } else {
             if (role === 'client') {
-                db.query("DELETE FROM mdod.Client WHERE email = ?;"), [email], (err, result) => {
+                db.query("DELETE FROM mdod.Client WHERE email = ?;", [email], (error, result) => {
                     if (error) {
                         const err = Errors.conflict();
                         res.status(err.code).json(err);
                         return;
                     }
-                    res.status(200).json({message: "Client Verwijderd"})
-                }
+                    res.status(202).json({message: "Client Verwijderd"})
+                });
             }
             if (role === 'psychologist') {
-                db.query("DELETE FROM mdod.Psychologist WHERE email = ?;"), [email], (err, result) => {
+                db.query("DELETE FROM mdod.Psychologist WHERE email = ?;", [email], (error, result) => {
                     if (error) {
                         const err = Errors.conflict();
                         res.status(err.code).json(err);
                         return;
                     }
-                    res.status(200).json({message: "Psychologist Verwijderd"})
-                }
+                    res.status(200).json({message: "Psychologist Verwijderd"});
+                });
             } else {
                 const err = Errors.badRequest();
                 res.status(err.code).json(err);
