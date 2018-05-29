@@ -123,7 +123,7 @@ router.route('/goals/:goalId?')
             // The new goal.
             const goal = new Goal(description);
 
-            db.query("UPDATE mdod.Goal SET description = ? WHERE goalId = ? AND email = ?", [description, goalId, email], (error, result) => {
+            db.query("UPDATE mdod.Goal SET description = ? WHERE goalId = ? AND email = ?", [goal._description, goalId, email], (error, result) => {
                 if (error) {
                     console.log(error);
                     const err = Errors.conflict();
@@ -180,7 +180,7 @@ router.route('/risks/:riskId?')
 
             const risk = new Risk(description);
 
-            if (goal._description) {
+            if (risk._description) {
                 db.query("INSERT INTO mdod.Risk(email, description) VALUES(?, ?)", [email, risk._description], (error, result) => {
                     if (error) {
                         console.log(error);
@@ -190,11 +190,11 @@ router.route('/risks/:riskId?')
                     }
 
                     res.status(201).json({
-                        message: "Goal aangemaakt"
+                        message: "Risk aangemaakt"
                     })
                 })
             } else {
-                res.status(goal.code).json(goal);
+                res.status(risk.code).json(goal);
             }
         });
     })
@@ -233,7 +233,7 @@ router.route('/risks/:riskId?')
                 }
 
                 res.status(200).json({
-                    message: "Goal verwijderd."
+                    message: "Risk verwijderd."
                 })
             })
         })
@@ -261,7 +261,7 @@ router.route('/risks/:riskId?')
             // The new goal.
             const risk = new Risk(description);
 
-            db.query("UPDATE mdod.Goals SET description = ? WHERE goalId = ? AND email = ?", [description, riskId, email], (error, result) => {
+            db.query("UPDATE mdod.Risk SET description = ? WHERE riskId = ? AND email = ?", [risk._description, riskId, email], (error, result) => {
                 if (error) {
                     console.log(error);
                     const err = Errors.conflict();
