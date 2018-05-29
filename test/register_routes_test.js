@@ -1,7 +1,7 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const index = require('../index');
-const db = require('../db/databaseConnector')
+const db = require('../db/databaseConnector');
 
 chai.should();
 chai.use(chaiHttp);
@@ -27,6 +27,11 @@ describe('Registration', function () {
             .end((err, res) => {
                 res.should.have.status(201);
                 res.body.should.be.a('object');
+                db.query('DELETE FROM mdod.Psychologist WHERE email = "stijn@gmail.com"'), function(err){
+                    if (err){
+                        console.log(err);
+                    }
+                };
                 done();
             });
     });

@@ -295,9 +295,11 @@ router.put("/:role", (req, res) => {
                             res.status(err.code).json(err);
                             return;
                         }
-                        console.log(result);
                         res.status(202).json({message: "Client Aangepast"})
                     });
+                }else {
+                    // If the user object contains the error message.
+                    res.status(client.code).json(client);
                 }
             }
         });
@@ -325,9 +327,11 @@ router.put("/:role", (req, res) => {
                             res.status(err.code).json(err);
                             return;
                         }
-                        console.log(result);
                         res.status(202).json({message: "Psycholoog Aangepast"})
                     });
+                }else {
+                    // If the user object contains the error message.
+                    res.status(psychologist.code).json(psychologist);
                 }
             }
         })
