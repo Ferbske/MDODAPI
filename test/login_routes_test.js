@@ -1,12 +1,18 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const index = require('../index');
+const db = require('../db/databaseConnector');
+
+function insertClient(){
+   db.query("INSERT INTO mdod.Client ")
+};
 
 chai.should();
 chai.use(chaiHttp);
 
 describe('Login', function(){
     this.timeout(10000);
+
 
     it('CLIENT: should return a token when providing valid information', (done) => {
         chai.request(index)
