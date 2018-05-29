@@ -341,15 +341,39 @@ router.put("/:role", (req, res) => {
 
 router.delete("/:role", (req, res) => {
     const role = req.params.role;
-    if (role === 'client') {
-
-    }
-    if (role === 'psychologist') {
-
-    } else {
-      const err = Errors.badRequest();
-      res.status(err.code).json(err);
-    }
+    const token = (req.header('X-Access-Token')) || '';
+    const data = auth.decodeToken(token, (err, payload) => {
+        const email = payload.sub;
+        if (err) {
+            console.log('Error handler: ' + err.message);
+            let error = Errors.noValidToken();
+            res.status(error.code).json(error);
+        } else {
+            if (role === 'client') {
+                db.query("DELETE FROM mdod.Client WHERE email = ?;"), [email], (err, result) => {
+                    if (error) {
+                        const err = Errors.conflict();
+                        res.status(err.code).json(err);
+                        return;
+                    }
+                    res.status(200).json({message: "Client Verwijderd"})
+                }
+            }
+            if (role === 'psychologist') {
+                db.query("DELETE FROM mdod.Psychologist WHERE email = ?;"), [email], (err, result) => {
+                    if (error) {
+                        const err = Errors.conflict();
+                        res.status(err.code).json(err);
+                        return;
+                    }
+                    res.status(200).json({message: "Psychologist Verwijderd"})
+                }
+            } else {
+                const err = Errors.badRequest();
+                res.status(err.code).json(err);
+            }
+        }
     });
+});
 
 module.exports = router;
