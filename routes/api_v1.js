@@ -145,7 +145,7 @@ router.route('/goals/:goalId?')
     });
 
 //Risk routes
-router.route('/risks/:riskId?')
+router.route('/risk/:riskId?')
     .get((req, res) => {
         const token = req.header('X-Access-Token');
         auth.decodeToken(token, (error, payload) => {
@@ -177,6 +177,7 @@ router.route('/risks/:riskId?')
             }
             const email = payload.sub;
             const description = req.body.description || '';
+            console.log(description)
 
             const risk = new Risk(description);
 
@@ -260,7 +261,7 @@ router.route('/risks/:riskId?')
             // Get the new description.
             const description = req.body.description || '';
 
-            // The new goal.
+            // The new risk.
             const risk = new Risk(description);
 
             db.query("UPDATE mdod.Risk SET description = ? WHERE riskId = ? AND email = ?", [risk._description, riskId, email], (error, result) => {
