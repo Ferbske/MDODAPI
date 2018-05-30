@@ -1,13 +1,12 @@
 const express = require('express');
 const router = express.Router({});
-const config = require('../config');
 const auth = require('../auth/authentication');
 const Errors = require('../models/Errors');
 const db = require('../db/databaseConnector');
 const Goal = require('../models/Goal');
 const Risk = require('../models/Risk');
 
-router.route('/goals/:goalId?')
+router.route('/goal/:goalId?')
     .get((req, res) => {
         const token = req.header('X-Access-Token');
         auth.decodeToken(token, (error, payload) => {
