@@ -416,4 +416,25 @@ router.put('/pickclient', (req, res) => {
     });
 });
 
+router.get('/clients-by-psychologist', (req, res) => {
+    const token = (req.header('X-Access-Token')) || '';
+    const data = auth.decodeToken(token, (err, payload) => {
+        if (err) {
+            console.log('Error handler: ' + err.message);
+            let error = Errors.noValidToken();
+            res.status(error.code).json(error);
+        } else {
+            const email = payload.sub;
+            db.query("SELECT email, firstname, infix, lastname FROM mdod.Client WHERE contact = ?", [email], (error, rows) => {
+                if (error) {
+                    console.log(error);
+                    const err = Errors.unknownError();
+                    res.status(err.code).json(err);
+                }
+                res.status(200).json(rows)
+            });
+        }
+    });
+});
+
 module.exports = router;
