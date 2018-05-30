@@ -22,7 +22,7 @@ function deleteClient() {
     };
 }
 
-describe('Update ', function () {
+describe('Update client and psychologist ', function () {
     this.timeout(10000);
 
     before(function () {
@@ -685,6 +685,6 @@ describe('Update ', function () {
     after(function () {
         deletePsychologist();
         deleteClient();
-        process.exit();
+        //process.exit();
     });
 });
