@@ -306,6 +306,50 @@ describe('Update ', function () {
             });
     });
 
+    it('CLIENT: Invalid token', (done) => {
+        chai.request(index)
+            .put('/api/client')
+            .set('X-Access-Token','yJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .send({
+                "firstname": "Stein",
+                "infix": "",
+                "lastname": "veentjes",
+                "dob": "1996-11-27",
+                "phonenumber": "062345678",
+                "city" : "Bergen op Zoom",
+                "adress" : "Zuidsingel 8",
+                "zipcode" : "4611 HB"
+            })
+            .end((err, res) => {
+                res.should.have.status(498);
+                res.body.should.be.a('object');
+                done();
+            });
+    });
+
+    it('CLIENT: Invalid route', (done) => {
+        chai.request(index)
+            .put('/api/cliend')
+            .set('X-Access-Token','eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .send({
+                "firstname": "Stein",
+                "infix": "",
+                "lastname": "veentjes",
+                "dob": "1996-11-27",
+                "phonenumber": "062345678",
+                "city" : "Bergen op Zoom",
+                "adress" : "Zuidsingel 8",
+                "zipcode" : "4611 HB"
+            })
+            .end((err, res) => {
+                res.should.have.status(400);
+                res.body.should.be.a('object');
+                done();
+            });
+    });
+
     it('CLIENT: update firstname with valid information', (done) => {
         chai.request(index)
             .put('/api/client')
@@ -461,6 +505,181 @@ describe('Update ', function () {
             });
     });
 
+    it('CLIENT: update firstname with invalid information', (done) => {
+        chai.request(index)
+            .put('/api/client')
+            .set('X-Access-Token','eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .send({
+                "firstname": "Stein1",
+                "infix": "",
+                "lastname": "veen",
+                "dob": "1996-11-27",
+                "phonenumber": "062345678",
+                "city" : "Bergen op Zoom",
+                "adress" : "Zuidsingel 8",
+                "zipcode" : "4611 HB"
+            })
+            .end((err, res) => {
+                res.should.have.status(400);
+                res.body.should.be.a('object');
+                done();
+            });
+    });
+
+    it('CLIENT: update lastname with invalid information', (done) => {
+        chai.request(index)
+            .put('/api/client')
+            .set('X-Access-Token','eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .send({
+                "firstname": "Stein",
+                "infix": "",
+                "lastname": "veentjes2",
+                "dob": "1996-11-27",
+                "phonenumber": "062345678",
+                "city" : "Bergen op Zoom",
+                "adress" : "Zuidsingel 8",
+                "zipcode" : "4611 HB"
+            })
+            .end((err, res) => {
+                res.should.have.status(400);
+                res.body.should.be.a('object');
+                done();
+            });
+    });
+
+    it('CLIENT: update infix with invalid information', (done) => {
+        chai.request(index)
+            .put('/api/client')
+            .set('X-Access-Token','eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .send({
+                "firstname": "Stein",
+                "infix": "22",
+                "lastname": "veentjes",
+                "dob": "1996-11-27",
+                "phonenumber": "062345678",
+                "city" : "Bergen op Zoom",
+                "adress" : "Zuidsingel 8",
+                "zipcode" : "4611 HB"
+            })
+            .end((err, res) => {
+                res.should.have.status(400);
+                res.body.should.be.a('object');
+                done();
+            });
+    });
+
+    it('CLIENT: update DOB with invalid information', (done) => {
+        chai.request(index)
+            .put('/api/client')
+            .set('X-Access-Token','eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .send({
+                "firstname": "Stein",
+                "infix": "",
+                "lastname": "veentjes",
+                "dob": "1996-11w-27",
+                "phonenumber": "062345678",
+                "city" : "Bergen op Zoom",
+                "adress" : "Zuidsingel 8",
+                "zipcode" : "4611 HB"
+            })
+            .end((err, res) => {
+                res.should.have.status(400);
+                res.body.should.be.a('object');
+                done();
+            });
+    });
+
+    it('CLIENT: update phonenumber with invalid information', (done) => {
+        chai.request(index)
+            .put('/api/client')
+            .set('X-Access-Token','eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .send({
+                "firstname": "Stein",
+                "infix": "",
+                "lastname": "veentjes",
+                "dob": "1996-11-27",
+                "phonenumber": "062345678000000000000000",
+                "city" : "Bergen op Zoom",
+                "adress" : "Zuidsingel 8",
+                "zipcode" : "4611 HB"
+            })
+            .end((err, res) => {
+                res.should.have.status(400);
+                res.body.should.be.a('object');
+                done();
+            });
+    });
+
+    it('CLIENT: update city with invalid information', (done) => {
+        chai.request(index)
+            .put('/api/client')
+            .set('X-Access-Token','eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .send({
+                "firstname": "Stein",
+                "infix": "22",
+                "lastname": "veentjes",
+                "dob": "1996-11-27",
+                "phonenumber": "062345678",
+                "city" : "Bergen op Zoom 20",
+                "adress" : "Zuidsingel 8",
+                "zipcode" : "4611 HB"
+            })
+            .end((err, res) => {
+                res.should.have.status(400);
+                res.body.should.be.a('object');
+                done();
+            });
+    });
+
+    it('CLIENT: update address with invalid information', (done) => {
+        chai.request(index)
+            .put('/api/client')
+            .set('X-Access-Token','eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .send({
+                "firstname": "Stein",
+                "infix": "",
+                "lastname": "veentjes",
+                "dob": "1996-11-27",
+                "phonenumber": "062345678",
+                "city" : "Bergen op Zoom",
+                "adress" : "Zuidsingel8 8 8  8",
+                "zipcode" : "4611 HB"
+            })
+            .end((err, res) => {
+                res.should.have.status(400);
+                res.body.should.be.a('object');
+                done();
+            });
+    });
+
+    it('CLIENT: update zipcode with invalid information', (done) => {
+        chai.request(index)
+            .put('/api/client')
+            .set('X-Access-Token','eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .send({
+                "firstname": "Stein",
+                "infix": "22",
+                "lastname": "veentjes",
+                "dob": "1996-11-27",
+                "phonenumber": "062345678",
+                "city" : "Bergen op Zoom",
+                "adress" : "Zuidsingel 8",
+                "zipcode" : "4611 HBB"
+            })
+            .end((err, res) => {
+                res.should.have.status(400);
+                res.body.should.be.a('object');
+                done();
+            });
+    });
     deleteClient();
 
 });
