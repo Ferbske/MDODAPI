@@ -224,7 +224,7 @@ router.get('/:role', (req, res) => {
                         res.status(err.code).json(err);
                         return;
                     }
-                    if (rows.length < 0) {
+                    if (rows.length < 1) {
                         let error = Errors.notFound();
                         res.status(error.code).json(error);
                         return;
