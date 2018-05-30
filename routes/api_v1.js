@@ -177,7 +177,6 @@ router.route('/risk/:riskId?')
             }
             const email = payload.sub;
             const description = req.body.description || '';
-            console.log(description)
 
             const risk = new Risk(description);
 
@@ -255,7 +254,7 @@ router.route('/risk/:riskId?')
             // Get the email of the user that would like to update the risk.
             const email = payload.sub;
 
-            // Get the id of the goal that needs to be updated.
+            // Get the id of the risk that needs to be updated.
             const riskId = req.params.riskId || '';
 
             // Get the new description.
