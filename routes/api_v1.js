@@ -212,10 +212,10 @@ router.route('/risks/:riskId?')
                 return;
             }
 
-            // Get the goalId from the request. The goal with this id wil be deleted
+            // Get the riskId from the request. The risk with this id wil be deleted
             const riskId = req.params.riskId;
 
-            // Get the email of the person who would like to delete the goal.
+            // Get the email of the person who would like to delete the risk.
             const email = payload.sub;
             db.query("DELETE FROM mdod.Risk WHERE riskId = ? AND email = ?", [riskId, email], (error, result) => {
                 if (error) {
@@ -249,8 +249,9 @@ router.route('/risks/:riskId?')
                 return;
             }
 
-            // Get the email of the user that would like to update the goal.
+            // Get the email of the user that would like to update the risk.
             const email = payload.sub;
+            console.log(email)
 
             // Get the id of the goal that needs to be updated.
             const riskId = req.body.riskId || '';
