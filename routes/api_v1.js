@@ -137,7 +137,7 @@ router.route('/goal/:goalId?')
                 }
 
                 res.status(202).json({
-                    message: "Goal geüpdated."
+                    message: "Goal geüpdate."
                 })
             })
         })
