@@ -4,10 +4,12 @@ const auth = require('../auth/authentication');
 const Errors = require('../models/Errors');
 const db = require('../db/databaseConnector');
 const Goal = require('../models/Goal');
+const global = require('../globalFunctions');
 
 router.route('/:goalId?')
     .get((req, res) => {
-        const token = req.header('X-Access-Token');
+        const token = global.stripBearerToken(req.header('Authorization'));
+
         auth.decodeToken(token, (error, payload) => {
             if (error) {
                 console.log(error);
@@ -28,7 +30,8 @@ router.route('/:goalId?')
         });
     })
     .post((req, res) => {
-        const token = req.header('X-Access-Token') || '';
+        const token = global.stripBearerToken(req.header('Authorization'));
+
         auth.decodeToken(token, (error, payload) => {
             if (error) {
                 console.log(error);
@@ -61,7 +64,7 @@ router.route('/:goalId?')
     })
     .delete((req, res) => {
         // Get the token from the request
-        const token = req.header('X-Access-Token') || '';
+        const token = global.stripBearerToken(req.header('Authorization'));
 
         // Decode the token.
         auth.decodeToken(token, (error, payload) => {
@@ -100,7 +103,7 @@ router.route('/:goalId?')
         })
     })
     .put((req, res) => {
-        const token = req.header('X-Access-Token') || '';
+        const token = global.stripBearerToken(req.header('Authorization'));
 
         auth.decodeToken(token, (error, payload) => {
             if (error) {
