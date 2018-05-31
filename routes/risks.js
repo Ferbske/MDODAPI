@@ -50,6 +50,7 @@ router.route('/:riskId?')
                     }
 
                     res.status(201).json({
+                        riskId: result.insertId,
                         message: "Risk aangemaakt"
                     })
                 })

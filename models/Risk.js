@@ -3,7 +3,7 @@ const Errors = require('./Errors');
 class Risk {
     constructor(description) {
         if(!(
-            description && /^.{0,280}$/.test(description)
+            description && /^[A-Za-z.\s\-\d\,]{0,280}$/.test(description)
         )) {
             return Errors.badRequest();
         }
