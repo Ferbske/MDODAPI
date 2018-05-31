@@ -1,6 +1,6 @@
 const Errors = require('./Errors');
 
-class Goal {
+class Risk {
     constructor(description) {
         if(!(
             description && /^[A-Za-z.\s\-\d\,]{0,280}$/.test(description)
@@ -12,4 +12,4 @@ class Goal {
     }
 }
 
-module.exports = Goal;
+module.exports = Risk
