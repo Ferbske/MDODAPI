@@ -7,6 +7,7 @@ const Psychologist = require('../models/Psych');
 const Client = require('../models/Client');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+const global = require('../globalFunctions');
 
 router.post("/login/:role", (req, res) => {
     let role = req.params.role;
@@ -208,7 +209,7 @@ router.post("/register/:role", (req, res) => {
 });
 
 router.get('/:role', (req, res) => {
-    const token = (req.header('X-Access-Token')) || '';
+    const token = global.stripBearerToken(req.header('Authorization'));
     const role = req.params.role;
     if (role === 'client') {
         const data = auth.decodeToken(token, (err, payload) => {
@@ -279,7 +280,7 @@ router.put("/:role", (req, res) => {
         const city = req.body.city || "";
         const address = req.body.adress || "";
         const zipCode = req.body.zipcode || "";
-        const token = (req.header('X-Access-Token')) || '';
+        const token = global.stripBearerToken(req.header('Authorization'));
         const data = auth.decodeToken(token, (err, payload) => {
             if (err) {
                 console.log('Error handler: ' + err.message);
@@ -310,7 +311,7 @@ router.put("/:role", (req, res) => {
         const lastname = req.body.lastname || "";
         const phonenumber = req.body.phonenumber || "";
         const location = req.body.location;
-        const token = (req.header('X-Access-Token')) || '';
+        const token = global.stripBearerToken(req.header('Authorization'));
         const data = auth.decodeToken(token, (err, payload) => {
             if (err) {
                 console.log('Error handler: ' + err.message);
@@ -343,7 +344,7 @@ router.put("/:role", (req, res) => {
 
 router.delete("/:role", (req, res) => {
     const role = req.params.role;
-    const token = (req.header('X-Access-Token')) || '';
+    const token = global.stripBearerToken(req.header('Authorization'));
     const data = auth.decodeToken(token, (err, payload) => {
         const email = payload.sub;
         if (err) {

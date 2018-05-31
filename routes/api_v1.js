@@ -3,17 +3,16 @@ const router = express.Router({});
 const auth = require('../auth/authentication');
 const Errors = require('../models/Errors');
 const db = require('../db/databaseConnector');
-const Goal = require('../models/Goal');
-const Risk = require('../models/Risk');
 const goals = require('./goals');
 const risks = require('./risks');
+const global = require('../globalFunctions');
 
 router.use('/goal', goals);
 router.use('/risk', risks);
 
 //Role routes
 router.get('/all/:role', (req, res) => {
-    const token = (req.header('X-Access-Token')) || '';
+    const token = global.stripBearerToken(req.header('Authorization'));
     const role = req.params.role;
     const data = auth.decodeToken(token, (err, payload) => {
         if (err) {
@@ -61,7 +60,7 @@ router.get('/all/:role', (req, res) => {
 });
 
 router.post('/specific/:role', (req, res) => {
-    const token = (req.header('X-Access-Token')) || '';
+    const token = global.stripBearerToken(req.header('Authorization'));
     const role = req.params.role;
     const data = auth.decodeToken(token, (err, payload) => {
         if (err) {
@@ -110,7 +109,7 @@ router.post('/specific/:role', (req, res) => {
 });
 
 router.put('/pickclient', (req, res) => {
-    const token = (req.header('X-Access-Token')) || '';
+    const token = global.stripBearerToken(req.header('Authorization'));
     const data = auth.decodeToken(token, (err, payload) => {
         if (err) {
             console.log('Error handler: ' + err.message);
@@ -159,7 +158,7 @@ router.put('/pickclient', (req, res) => {
 });
 
 router.get('/clients-by-psychologist', (req, res) => {
-    const token = (req.header('X-Access-Token')) || '';
+    const token = global.stripBearerToken(req.header('Authorization'));
     const data = auth.decodeToken(token, (err, payload) => {
         if (err) {
             console.log('Error handler: ' + err.message);
