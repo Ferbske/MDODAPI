@@ -146,7 +146,7 @@ describe('Update client and psychologist ', function () {
             });
     });
 
-    it('CLIENT: should return a not found error when nothing is in the body', (done) => {
+    it('CLIENT: should return a not found error when no email is provided in the body', (done) => {
         chai.request(index)
             .post('/api/v1/specific/client')
             .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
@@ -170,6 +170,70 @@ describe('Update client and psychologist ', function () {
             .set('Content-Type', 'application/json')
             .send({
                 "email": "sjaak@gmail.com",
+            })
+            .end((err, res) => {
+                res.should.have.status(400);
+                res.body.should.be.a('object');
+                done();
+            });
+    });
+
+    it('PSYCHOLOOG: should return a 200 status and has added a psycholoog to a client', (done) => {
+        chai.request(index)
+            .put('/api/v1/pickclient')
+            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
+            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
+            .set('Content-Type', 'application/json')
+            .send({
+                "email": "sjaak@gmail.com",
+            })
+            .end((err, res) => {
+                res.should.have.status(202);
+                res.body.should.be.a('object');
+                done();
+            });
+    });
+
+    it('PSYCHOLOOG: should return a 404 status when given a invalid client', (done) => {
+        chai.request(index)
+            .put('/api/v1/pickclient')
+            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
+            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
+            .set('Content-Type', 'application/json')
+            .send({
+                "email": "jaak@gmail.com",
+            })
+            .end((err, res) => {
+                res.should.have.status(404);
+                res.body.should.be.a('object');
+                done();
+            });
+    });
+
+    it('PSYCHOLOOG: should return a 498 status for an invalid token when given a valid client', (done) => {
+        chai.request(index)
+            .put('/api/v1/pickclient')
+            .set('X-Access-Token', 'yJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
+            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
+            .set('Content-Type', 'application/json')
+            .send({
+                "email": "sjaak@gmail.com",
+            })
+            .end((err, res) => {
+                res.should.have.status(498);
+                res.body.should.be.a('object');
+                done();
+            });
+    });
+
+    it('PSYCHOLOOG: should return a 400 status for an invalid route when given a valid client', (done) => {
+        chai.request(index)
+            .put('/api/v1/pickcliend')
+            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
+            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
+            .set('Content-Type', 'application/json')
+            .send({
+                "email": "sjaak@gmail.com"
             })
             .end((err, res) => {
                 res.should.have.status(400);

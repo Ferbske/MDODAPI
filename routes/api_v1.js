@@ -402,13 +402,26 @@ router.put('/pickclient', (req, res) => {
                     res.status(error.code).json(error);
                 }
                 else if (rows.length > 0) {
-                    db.query("UPDATE mdod.Client SET contact = ? WHERE email = ?", [email, client_email], (error, result) => {
+                    db.query("SELECT email FROM mdod.Client WHERE email = ?;", [client_email], (error, rows) => {
                         if (error) {
                             console.log(error);
                             const err = Errors.unknownError();
                             res.status(err.code).json(err);
                         }
-                        res.status(202).json({message: "Client Aangepast"});
+                        if (rows.length < 1) {
+                            let error = Errors.notFound();
+                            res.status(error.code).json(error);
+                        }
+                        else if (rows.length > 0) {
+                            db.query("UPDATE mdod.Client SET contact = ? WHERE email = ?", [email, client_email], (error, result) => {
+                                if (error) {
+                                    console.log(error);
+                                    const err = Errors.unknownError();
+                                    res.status(err.code).json(err);
+                                }
+                                res.status(202).json({message: "Client Aangepast"})
+                            });
+                        }
                     });
                 }
             });
