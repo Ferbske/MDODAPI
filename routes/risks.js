@@ -4,10 +4,11 @@ const auth = require('../auth/authentication');
 const Errors = require('../models/Errors');
 const db = require('../db/databaseConnector');
 const Risk = require('../models/Risk');
+const global = require('../globalFunctions');
 
 router.route('/:riskId?')
     .get((req, res) => {
-        const token = req.header('X-Access-Token');
+        const token = global.stripBearerToken(req.header('Authorization'));
         auth.decodeToken(token, (error, payload) => {
             if (error) {
                 console.log(error);
@@ -28,7 +29,7 @@ router.route('/:riskId?')
         });
     })
     .post((req, res) => {
-        const token = req.header('X-Access-Token') || '';
+        const token = global.stripBearerToken(req.header('Authorization'));
         auth.decodeToken(token, (error, payload) => {
             if (error) {
                 console.log(error);
@@ -61,7 +62,7 @@ router.route('/:riskId?')
     })
     .delete((req, res) => {
         // Get the token from the request
-        const token = req.header('X-Access-Token') || '';
+        const token = global.stripBearerToken(req.header('Authorization'));
 
         // Decode the token.
         auth.decodeToken(token, (error, payload) => {
@@ -100,7 +101,7 @@ router.route('/:riskId?')
         })
     })
     .put((req, res) => {
-        const token = req.header('X-Access-Token') || '';
+        const token = global.stripBearerToken(req.header('Authorization'));
 
         auth.decodeToken(token, (error, payload) => {
             if (error) {
@@ -109,8 +110,6 @@ router.route('/:riskId?')
                 res.status(err.code).json(err);
                 return;
             }
-
-            console.log(req);
 
             // Get the email of the user that would like to update the risk.
             const email = payload.sub;
