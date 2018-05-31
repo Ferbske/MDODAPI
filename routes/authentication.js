@@ -82,7 +82,7 @@ router.post("/login/:role", (req, res) => {
                 }
             });
         })
-    }else {
+    } else {
         const err = Errors.badRequest();
         res.status(err.code).json(err);
     }
@@ -200,7 +200,7 @@ router.post("/register/:role", (req, res) => {
             // If the user object contains the error message.
             res.status(client.code).json(client);
         }
-    }else {
+    } else {
         const err = Errors.badRequest();
         res.status(err.code).json(err);
     }
@@ -224,7 +224,7 @@ router.get('/:role', (req, res) => {
                         res.status(err.code).json(err);
                         return;
                     }
-                    if (rows.length < 0) {
+                    if (rows.length < 1) {
                         let error = Errors.notFound();
                         res.status(error.code).json(error);
                         return;
@@ -261,7 +261,7 @@ router.get('/:role', (req, res) => {
                 });
             }
         });
-    }else {
+    } else {
         const err = Errors.badRequest();
         res.status(err.code).json(err);
     }
@@ -295,14 +295,15 @@ router.put("/:role", (req, res) => {
                             res.status(err.code).json(err);
                             return;
                         }
-                        console.log(result);
                         res.status(202).json({message: "Client Aangepast"})
                     });
+                } else {
+                    // If the user object contains the error message.
+                    res.status(client.code).json(client);
                 }
             }
         });
-    }
-    if(role === 'psychologist'){
+    } else if (role === 'psychologist') {
         const password = "qwerty123";
         const firstname = req.body.firstname || "";
         const infix = req.body.infix || "";
@@ -315,6 +316,7 @@ router.put("/:role", (req, res) => {
                 console.log('Error handler: ' + err.message);
                 let error = Errors.noValidToken();
                 res.status(error.code).json(error);
+                return;
             } else {
                 const email = payload.sub;
                 const psychologist = new Psychologist(email, password, firstname, infix, lastname, location, phonenumber);
@@ -325,13 +327,15 @@ router.put("/:role", (req, res) => {
                             res.status(err.code).json(err);
                             return;
                         }
-                        console.log(result);
                         res.status(202).json({message: "Psycholoog Aangepast"})
                     });
+                } else {
+                    // If the user object contains the error message.
+                    res.status(psychologist.code).json(psychologist);
                 }
             }
-        })
-    }else {
+        });
+    } else {
         const err = Errors.badRequest();
         res.status(err.code).json(err);
     }
@@ -357,7 +361,7 @@ router.delete("/:role", (req, res) => {
                     res.status(202).json({message: "Client Verwijderd"})
                 });
             }
-            if (role === 'psychologist') {
+            else if (role === 'psychologist') {
                 db.query("DELETE FROM mdod.Psychologist WHERE email = ?;", [email], (error, result) => {
                     if (error) {
                         const err = Errors.conflict();
