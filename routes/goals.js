@@ -90,7 +90,6 @@ router.route('/:goalId?')
                 }
 
                 if (result.affectedRows < 1) {
-                    console.log("0 rows affected");
                     const error = Errors.forbidden();
                     res.status(error.code).json(error);
                     return;
@@ -145,4 +144,39 @@ router.route('/:goalId?')
             })
         });
     });
+
+router.put("/update/status", (req, res) => {
+    const token = global.stripBearerToken(req.header('Authorization'));
+    auth.decodeToken(token, (error, payload) => {
+        if (error) {
+            const err = Errors.noValidToken();
+            res.status(err.code).json(err);
+            return;
+        }
+
+        const email = payload.sub;
+
+        const isCompleted = req.body.isCompleted;
+
+        const goalId = req.body.goalId;
+
+        db.query("UPDATE mdod.Goal SET isCompleted = ? where email = ? AND goalId = ?", [isCompleted, email, goalId], (error, result) => {
+            if (error) {
+                const err = Errors.conflict();
+                res.status(err.code).json(err);
+                return;
+            }
+
+            if (result.affectedRows < 1) {
+                const err = Errors.forbidden();
+                res.status(err.code).json(err);
+                return;
+            }
+
+            res.status(202).json({
+                message: "Status geüpdate"
+            });
+        });
+    });
+});
 module.exports = router;
