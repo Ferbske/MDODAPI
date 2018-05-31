@@ -50,6 +50,7 @@ router.route('/:goalId?')
                     }
 
                     res.status(201).json({
+                        goalId: result.insertId,
                         message: "Goal aangemaakt"
                     })
                 })
