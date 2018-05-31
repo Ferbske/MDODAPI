@@ -22,7 +22,7 @@ function deleteClient() {
     };
 }
 
-describe('Update ', function () {
+describe('Update client and psychologist ', function () {
     this.timeout(10000);
 
     before(function () {
@@ -682,9 +682,31 @@ describe('Update ', function () {
             });
     });
 
+    it('CLIENT: should return 200 with some with empty fields', (done) => {
+        chai.request(index)
+            .put('/api/client')
+            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .send({
+                "firstname": "Stein",
+                "infix": "",
+                "lastname": "veen",
+                "dob": "1996-11-27",
+                "phonenumber": "",
+                "city": "Bergen op Zoom",
+                "adress": "",
+                "zipcode": ""
+            })
+            .end((err, res) => {
+                res.should.have.status(202);
+                res.body.should.be.a('object');
+                done();
+            });
+    });
+
     after(function () {
         deletePsychologist();
         deleteClient();
-        process.exit();
+        //process.exit();
     });
 });
