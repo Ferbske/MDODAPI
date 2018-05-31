@@ -110,8 +110,6 @@ router.route('/:riskId?')
                 return;
             }
 
-            console.log(req);
-
             // Get the email of the user that would like to update the risk.
             const email = payload.sub;
 
