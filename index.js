@@ -32,7 +32,6 @@ app.use(expressJWT({
 }).unless({
     path: ['/api/login/psychologist', '/api/login/client', '/api/register/client', '/api/register/psychologist']
 }), function (error, req, res, next) {
-    console.log(error);
     if (error.name === "UnauthorizedError") {
         const err = Errors.unauthorized();
         res.status(err.code).json(err);
