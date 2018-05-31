@@ -18,7 +18,7 @@ app.use(bodyParser.json({
     type: "application/json"
 }));
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, X-Access-Token, Authorization");
@@ -32,14 +32,20 @@ app.use(expressJWT({
 }).unless({
     path: ['/api/login/psychologist', '/api/login/client', '/api/register/client', '/api/register/psychologist']
 }), function (error, req, res, next) {
+    console.log(error);
     if (error.name === "UnauthorizedError") {
-        const error = Errors.unauthorized();
-        res.status(error.code).json(error);
+        const err = Errors.unauthorized();
+        res.status(err.code).json(err);
     }
 });
 
 // Route to /api
 app.use("/api", api);
+
+app.all('*', (req, res) => {
+    const error = Errors.badRequest();
+    res.status(error.code).json(error);
+});
 
 // process.env.PORT specifies the port that Heroku set for the api. Else config.port is used.
 const port = process.env.PORT || config.port;
