@@ -19,7 +19,7 @@ router.route('/:goalId?')
             }
 
             const email = payload.sub;
-            db.query("SELECT goalId, description FROM mdod.Goal WHERE email = ?", [email], (error, rows, fields) => {
+            db.query("SELECT goalId, description, isCompleted FROM mdod.Goal WHERE email = ?;", [email], (error, rows, fields) => {
                 if (error) {
                     const err = Errors.conflict();
                     res.status(err.code).json(err);
