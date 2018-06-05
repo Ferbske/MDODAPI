@@ -9,19 +9,13 @@ const goals = require('./goals');
 const risks = require('./risks');
 const difficult_moment = require('./difficult_moments');
 const global = require('../globalFunctions');
+const usage = require('./usage');
 
 //Routers for goals and risks and difficult moments
 router.use('/goal', goals);
 router.use('/risk', risks);
 router.use('/difficult_moment', difficult_moment);
-const usage = require('./usage');
-const global = require('../globalFunctions');
-
-//Routers
-router.use('/goal', goals);
-router.use('/risk', risks);
 router.use('/usage', usage);
-
 
 /*
  * Role routes
