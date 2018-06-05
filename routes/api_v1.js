@@ -29,6 +29,8 @@ router.get('/all/:role', (req, res) => {
             //Get all clients
             if (role === 'client') {
                 const email = payload.sub;
+
+                //Verify email
                 db.query("SELECT email FROM mdod.Psychologist WHERE email = ?;", [email], (error, rows) => {
                     
                     //Query/DB Error
@@ -45,7 +47,7 @@ router.get('/all/:role', (req, res) => {
                         return;
                     }
 
-                    //Get clients by psycologist email
+                    //Get all clients
                     if (rows.length > 0) {
                         db.query("SELECT email, firstname, infix, lastname FROM mdod.Client", [email], (error, rows) => {
                             
