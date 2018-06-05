@@ -1,5 +1,9 @@
 const express = require('express');
 const router = express.Router({});
+const global = require('../globalFunctions');
+const auth = require('../auth/authentication');
+const db = require('../db/databaseConnector');
+const Errors = require('../models/Errors');
 
 router.route('/')
 /**
@@ -14,7 +18,7 @@ router.route('/')
             db.query("SELECT mdod.Addiction.id, mdod.Addiction.substanceId, mdod.Addiction.email, mdod.Substance.`type`, mdod.Substance.name, mdod.Substance.measuringUnit\n" +
                 "FROM mdod.Addiction \n" +
                 "\tINNER JOIN mdod.Substance ON mdod.Addiction.substanceId = mdod.Substance.id\n" +
-                "\tWHERE mdod.Addiction.email = '?';", [email], (error, rows, fields) => {
+                "\tWHERE mdod.Addiction.email = ?;", [email], (error, rows, fields) => {
                 if (error) {
                     console.log(error);
                     const err = Errors.conflict();
