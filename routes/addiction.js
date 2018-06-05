@@ -116,7 +116,7 @@ router.route('/')
                     return;
                 }
 
-                res.status(201).json({
+                res.status(202).json({
                     message: "Verslaving geupdate"
                 })
             })
