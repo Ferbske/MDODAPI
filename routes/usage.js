@@ -20,7 +20,6 @@ router.route('/clean')
             }
 
             const email = payload.sub
-            console.log(email)
             db.query("SELECT DATEDIFF(CURDATE(), MAX(mdod.`Usage`.usedAt)) AS daysClean " +
                 "FROM mdod.Usage " +
                 "INNER JOIN mdod.Substance ON mdod.Usage.substanceId = mdod.Substance.id " +
