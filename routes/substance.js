@@ -5,15 +5,6 @@ const db = require('../db/databaseConnector');
 const auth = require('../auth/authentication');
 const Errors = require('../models/Errors');
 
-router.route('/')
-    .get((req, res) => {
-        const token = global.stripBearerToken(req.header('Authorization'));
-
-        auth.decodeToken(token, (error, payload) => {
-
-        })
-    });
-
 router.route('/all')
     .get((req, res) => {
         const token = global.stripBearerToken(req.header('Authorization'));
@@ -36,7 +27,7 @@ router.route('/all')
                     const error = Errors.notFound();
                     res.status(error.code).json(error);
                 }
-                
+
                 res.status(200).json(rows);
             })
         })
