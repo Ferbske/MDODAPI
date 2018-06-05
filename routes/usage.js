@@ -18,14 +18,38 @@ router.route('/:usageId?')
                 return;
             }
 
-            const email = payload.sub;
-            db.query("SELECT usageId, description, usedAt FROM mdod.Usage WHERE email = ?;", [email], (error, rows, fields) => {
+            const usageId = req.params.usageId;
+            console.log(usageId)
+            db.query("SELECT substanceId, description, usedAt FROM mdod.Usage WHERE id = ?;", [usageId], (error, rows, fields) => {
                 if (error) {
                     const err = Errors.conflict();
                     res.status(err.code).json(err);
                     return;
+                } else {
+                    const substanceId = rows[0].substanceId;
+                    const description = rows[0].description;
+                    const usedAt = rows[0].usedAt;
+
+                    console.log(description)
+
+                    db.query("SELECT type, name FROM mdod.Substance WHERE id = ?;", [substanceId], (error, rows, fields) => {
+                        if (error) {
+                            const err = Errors.conflict();
+                            res.status(err.code).json(err);
+                            return;
+                        } else {
+                            const type = rows[0].type;
+                            const name = rows[0].name;
+
+                            res.status(200).json({
+                                "type": type,
+                                "name": name,
+                                "usedAt": usedAt,
+                                "description": description
+                            });
+                        }
+                    });
                 }
-                res.status(200).json(rows);
             });
         });
     })
@@ -40,13 +64,14 @@ router.route('/:usageId?')
             }
             const email = payload.sub;
             const description = req.body.description || '';
+            const substanceId = req.body.substanceId;
 
-            const usage = new Usage(description);
+            const usage = new Usage(substanceId, description);
 
             if (usage._description) {
-                db.query("INSERT INTO mdod.Usage(email, description) VALUES(?, ?)", [email, usage._description], (error, result) => {
+                db.query("INSERT INTO mdod.Usage(email, substanceId, description) VALUES(?, ?, ?)", [email, usage._substanceId, usage._description], (error, result) => {
                     if (error) {
-                        console.log(error);
+                        console.log(error);rs
                         const err = Errors.conflict();
                         res.status(err.code).json(err);
                         return;
@@ -81,7 +106,7 @@ router.route('/:usageId?')
 
             // Get the email of the person who would like to delete the usage.
             const email = payload.sub;
-            db.query("DELETE FROM mdod.Usage WHERE usageId = ? AND email = ?", [usageId, email], (error, result) => {
+            db.query("DELETE FROM mdod.Usage WHERE id = ? AND email = ?", [usageId, email], (error, result) => {
                 if (error) {
                     console.log(error);
                     const err = Errors.conflict();
@@ -121,10 +146,7 @@ router.route('/:usageId?')
             // Get the new description.
             const description = req.body.description || '';
 
-            // The new usage.
-            const usage = new Usage(description);
-
-            db.query("UPDATE mdod.Usage SET description = ? WHERE usageId = ? AND email = ?", [usage._description, usageId, email], (error, result) => {
+            db.query("UPDATE mdod.Usage SET description = ? WHERE id = ? AND email = ?", [description, usageId, email], (error, result) => {
                 if (error) {
                     console.log(error);
                     const err = Errors.conflict();
