@@ -17,6 +17,17 @@ router.route('/all')
             }
 
             db.query("SELECT * FROM mdod.Substance", (error, rows, fields) => {
+                if (error) {
+                    console.log(error);
+                    const err = Errors.conflict();
+                    res.status(err.code).json(err);
+                }
+
+                if (rows.length < 1) {
+                    const error = Errors.notFound();
+                    res.status(error.code).json(error);
+                }
+
                 res.status(200).json(rows);
             })
         })
