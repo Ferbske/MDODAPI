@@ -3,13 +3,19 @@ const router = express.Router({});
 const auth = require('../auth/authentication');
 const Errors = require('../models/Errors');
 const db = require('../db/databaseConnector');
+
+//Routing files
 const goals = require('./goals');
 const risks = require('./risks');
+const usage = require('./usage');
+
 const global = require('../globalFunctions');
 
-//Routers for goals and risks
+//Routers
 router.use('/goal', goals);
 router.use('/risk', risks);
+router.use('/usage', usage);
+
 
 /*
  * Role routes
@@ -32,7 +38,7 @@ router.get('/all/:role', (req, res) => {
 
                 //Verify email
                 db.query("SELECT email FROM mdod.Psychologist WHERE email = ?;", [email], (error, rows) => {
-                    
+
                     //Query/DB Error
                     if (error) {
                         const err = Errors.unknownError();
@@ -50,7 +56,7 @@ router.get('/all/:role', (req, res) => {
                     //Get all clients
                     if (rows.length > 0) {
                         db.query("SELECT email, firstname, infix, lastname FROM mdod.Client", [email], (error, rows) => {
-                            
+
                             //Query/DB Error
                             if (error) {
                                 const err = Errors.unknownError();
@@ -96,7 +102,7 @@ router.post('/specific/:role', (req, res) => {
 
                 //Get Psychologist email
                 db.query("SELECT email FROM mdod.Psychologist WHERE email = ?;", [email], (error, rows) => {
-                    
+
                     //DB/Query Error
                     if (error) {
                         const err = Errors.unknownError();
@@ -157,7 +163,7 @@ router.put('/pickclient', (req, res) => {
 
             //Select Psychologist email
             db.query("SELECT email FROM mdod.Psychologist WHERE email = ?;", [email], (error, rows) => {
-                
+
                 // DB/Query Error
                 if (error) {
                     console.log(error);
@@ -170,12 +176,11 @@ router.put('/pickclient', (req, res) => {
                 if (rows.length < 1) {
                     let error = Errors.notFound();
                     res.status(error.code).json(error);
-                }
-                else if (rows.length > 0) {
+                } else if (rows.length > 0) {
 
                     //Select Client email
                     db.query("SELECT email FROM mdod.Client WHERE email = ?;", [client_email], (error, rows) => {
-                        
+
                         // DB/Query Error
                         if (error) {
                             console.log(error);
@@ -187,8 +192,7 @@ router.put('/pickclient', (req, res) => {
                         if (rows.length < 1) {
                             let error = Errors.notFound();
                             res.status(error.code).json(error);
-                        }
-                        else if (rows.length > 0) {
+                        } else if (rows.length > 0) {
 
                             //Add Psychologist to Client
                             db.query("UPDATE mdod.Client SET contact = ? WHERE email = ?", [email, client_email], (error, result) => {
@@ -197,7 +201,9 @@ router.put('/pickclient', (req, res) => {
                                     const err = Errors.unknownError();
                                     res.status(err.code).json(err);
                                 }
-                                res.status(202).json({message: "Client Aangepast"})
+                                res.status(202).json({
+                                    message: "Client Aangepast"
+                                })
                             });
                         }
                     });
@@ -216,7 +222,7 @@ router.get('/clients-by-psychologist', (req, res) => {
             let error = Errors.noValidToken();
             res.status(error.code).json(error);
         } else {
-            
+
             //Get Client email
             const email = payload.sub;
             db.query("SELECT email, firstname, infix, lastname FROM mdod.Client WHERE contact = ?", [email], (error, rows) => {
