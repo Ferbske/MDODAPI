@@ -24,15 +24,15 @@ router.post('/', (req, res) => {
                 if (rows.length < 1) {
                     let error = Errors.notFound();
                     res.status(error.code).json(error);
-                    return;
                 }
                 else if (rows.length > 0) {
                     const lust = req.body.lust || '';
                     const description = req.body.description || '';
+                    const substance_id = req.body.substance_id || '';
                     const moment = new Difficult_Moment(description, lust);
 
                     if(moment._description){
-                        db.query("INSERT INTO mdod.Difficult_moment(email, description, lust) VALUES(?, ? ,?)", [email, description, lust], (error, result) => {
+                        db.query("INSERT INTO mdod.Difficult_moment(email, description, lust, substance_id) VALUES(?, ? ,?, ?)", [email, description, lust, substance_id], (error, result) => {
                             if (error) {
                                 const err = Errors.conflict();
                                 res.status(err.code).json(err);
@@ -65,12 +65,11 @@ router.get('/', (req, res) => {
                 if (rows.length < 1) {
                     let error = Errors.notFound();
                     res.status(error.code).json(error);
-                    return;
                 }
-                if (rows.length > 0) {
-                    db.query("SELECT lust, description, date_lust FROM mdod.Difficult_moment WHERE email = ?;", [email], (error, rows) => {
+                else if (rows.length > 0) {
+                    db.query("SELECT lust, description, date_lust, Substance.`id`, Substance.`type`, Substance.name FROM mdod.Difficult_moment LEFT JOIN mdod.Substance ON Difficult_moment.substance_id = Substance.id WHERE email = ?;", [email], (error, rows) => {
                         if (error) {
-                            const err = Errors.unknownError();
+                            const err = Errors.conflict();
                             res.status(err.code).json(err);
                             return;
                         }
