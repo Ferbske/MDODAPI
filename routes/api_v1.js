@@ -5,11 +5,13 @@ const Errors = require('../models/Errors');
 const db = require('../db/databaseConnector');
 const goals = require('./goals');
 const risks = require('./risks');
+const difficult_moment = require('./difficult_moments');
 const global = require('../globalFunctions');
 
-//Routers for goals and risks
+//Routers for goals and risks and difficult moments
 router.use('/goal', goals);
 router.use('/risk', risks);
+router.use('/difficult_moment', difficult_moment);
 
 /*
  * Role routes
