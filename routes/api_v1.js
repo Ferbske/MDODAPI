@@ -162,12 +162,11 @@ router.put('/pickclient', (req, res) => {
             let error = Errors.noValidToken();
             res.status(error.code).json(error);
         } else {
-            const email = payload.sub;
+            let email = payload.sub;
             const client_email = req.body.email || "";
-
+            let insert_delete = req.body.insert || "";
             //Select Psychologist email
             db.query("SELECT email FROM mdod.Psychologist WHERE email = ?;", [email], (error, rows) => {
-
                 // DB/Query Error
                 if (error) {
                     console.log(error);
@@ -175,7 +174,6 @@ router.put('/pickclient', (req, res) => {
                     res.status(err.code).json(err);
                     return;
                 }
-
                 //No results
                 if (rows.length < 1) {
                     let error = Errors.notFound();
@@ -184,20 +182,20 @@ router.put('/pickclient', (req, res) => {
 
                     //Select Client email
                     db.query("SELECT email FROM mdod.Client WHERE email = ?;", [client_email], (error, rows) => {
-
                         // DB/Query Error
                         if (error) {
                             console.log(error);
                             const err = Errors.unknownError();
                             res.status(err.code).json(err);
                         }
-
                         //No results
                         if (rows.length < 1) {
                             let error = Errors.notFound();
                             res.status(error.code).json(error);
                         } else if (rows.length > 0) {
-
+                            if (insert_delete === "0") {
+                                email = null;
+                            }
                             //Add Psychologist to Client
                             db.query("UPDATE mdod.Client SET contact = ? WHERE email = ?", [email, client_email], (error, result) => {
                                 if (error) {
