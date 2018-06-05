@@ -7,15 +7,19 @@ const db = require('../db/databaseConnector');
 //Routing files
 const goals = require('./goals');
 const risks = require('./risks');
-const usage = require('./usage');
-
+const difficult_moment = require('./difficult_moments');
+const addiction = require('./addiction');
 const global = require('../globalFunctions');
+const usage = require('./usage');
+const substance = require('./substance');
 
-//Routers
+//Routers for goals and risks and difficult moments
 router.use('/goal', goals);
 router.use('/risk', risks);
+router.use('/addiction', addiction);
+router.use('/difficult_moment', difficult_moment);
 router.use('/usage', usage);
-
+router.use('/substance', substance);
 
 /*
  * Role routes
@@ -156,12 +160,11 @@ router.put('/pickclient', (req, res) => {
             let error = Errors.noValidToken();
             res.status(error.code).json(error);
         } else {
-            const email = payload.sub;
+            let email = payload.sub;
             const client_email = req.body.email || "";
-
+            let insert_delete = req.body.insert || "";
             //Select Psychologist email
             db.query("SELECT email FROM mdod.Psychologist WHERE email = ?;", [email], (error, rows) => {
-
                 // DB/Query Error
                 if (error) {
                     console.log(error);
@@ -169,7 +172,6 @@ router.put('/pickclient', (req, res) => {
                     res.status(err.code).json(err);
                     return;
                 }
-
                 //No results
                 if (rows.length < 1) {
                     let error = Errors.notFound();
@@ -178,20 +180,20 @@ router.put('/pickclient', (req, res) => {
 
                     //Select Client email
                     db.query("SELECT email FROM mdod.Client WHERE email = ?;", [client_email], (error, rows) => {
-
                         // DB/Query Error
                         if (error) {
                             console.log(error);
                             const err = Errors.unknownError();
                             res.status(err.code).json(err);
                         }
-
                         //No results
                         if (rows.length < 1) {
                             let error = Errors.notFound();
                             res.status(error.code).json(error);
                         } else if (rows.length > 0) {
-
+                            if (insert_delete === "0") {
+                                email = null;
+                            }
                             //Add Psychologist to Client
                             db.query("UPDATE mdod.Client SET contact = ? WHERE email = ?", [email, client_email], (error, result) => {
                                 if (error) {
