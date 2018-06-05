@@ -9,7 +9,7 @@ router.route('/')
 /**
  * Get all the addictions for a single client.
  */
-    .get((req, res) => {
+    .post((req, res) => {
         const token = global.stripBearerToken(req.header('Authorization'));
 
         auth.decodeToken(token, (error, payload) => {
@@ -18,7 +18,10 @@ router.route('/')
                 const err = Errors.noValidToken();
                 res.status(err.code).json(err);
             }
-            const email = payload.sub;
+
+            const email = req.body.email || '';
+
+            checkPsychAndClient(req, res, payload, email);
 
             db.query("SELECT mdod.Addiction.id, mdod.Addiction.substanceId, mdod.Addiction.email, mdod.Substance.`type`, mdod.Substance.name, mdod.Substance.measuringUnit\n" +
                 "FROM mdod.Addiction \n" +
