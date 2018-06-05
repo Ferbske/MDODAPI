@@ -7,8 +7,14 @@ const db = require('../db/databaseConnector');
 //Routing files
 const goals = require('./goals');
 const risks = require('./risks');
-const usage = require('./usage');
+const difficult_moment = require('./difficult_moments');
+const global = require('../globalFunctions');
 
+//Routers for goals and risks and difficult moments
+router.use('/goal', goals);
+router.use('/risk', risks);
+router.use('/difficult_moment', difficult_moment);
+const usage = require('./usage');
 const global = require('../globalFunctions');
 
 //Routers
