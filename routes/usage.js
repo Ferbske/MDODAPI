@@ -18,37 +18,35 @@ router.route('/:usageId?')
                 return;
             }
 
-            const usageId = req.params.usageId;
-            console.log(usageId)
-            db.query("SELECT substanceId, description, usedAt FROM mdod.Usage WHERE id = ?;", [usageId], (error, rows, fields) => {
+            const email = payload.sub
+            db.query("SELECT mdod.Usage.id, " +
+                "mdod.Usage.substanceId, mdod.Usage.description, mdod.Substance.`type`, mdod.Substance.name, " + 
+                 "mdod.Substance.measuringUnit, mdod.Usage.usedAt " +
+                 "FROM mdod.Usage " +
+                 "INNER JOIN mdod.Substance ON mdod.Usage.substanceId = mdod.Substance.id " + 
+                 "WHERE mdod.Usage.email = ?;", [email], (error, rows, fields) => {
                 if (error) {
                     const err = Errors.conflict();
                     res.status(err.code).json(err);
                     return;
                 } else {
+                    const usageId = rows[0].id;
                     const substanceId = rows[0].substanceId;
                     const description = rows[0].description;
+                    const type = rows[0].type;
+                    const name = rows[0].name;
+                    const measuringUnit = rows[0].measuringUnit
                     const usedAt = rows[0].usedAt;
 
-                    console.log(description)
-
-                    db.query("SELECT type, name FROM mdod.Substance WHERE id = ?;", [substanceId], (error, rows, fields) => {
-                        if (error) {
-                            const err = Errors.conflict();
-                            res.status(err.code).json(err);
-                            return;
-                        } else {
-                            const type = rows[0].type;
-                            const name = rows[0].name;
-
-                            res.status(200).json({
-                                "type": type,
-                                "name": name,
-                                "usedAt": usedAt,
-                                "description": description
-                            });
-                        }
-                    });
+                    res.status(200).json({
+                        "usageId": usageId,
+                        "substanceId": substanceId,
+                        "description": description,
+                        "type": type,
+                        "name": name,
+                        "measuringUnit": measuringUnit,
+                        "usedAt": usedAt
+                    })
                 }
             });
         });
