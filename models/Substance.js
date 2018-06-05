@@ -3,8 +3,8 @@ const Errors = require('./Errors');
 class Substance {
     constructor(type, name, measuringUnit){
         if(!(
-            type && /^[A-Za-z\s]/.test(type) &&
-            name && /^/.test(name) &&
+            type && /^.{0,20}/.test(type) &&
+            name && /^.{0,30}/.test(name) &&
             (measuringUnit === "" || measuringUnit && /^[A-Za-z\-\d\s]{0,15}/.test(measuringUnit))
         )) {
             return Errors.badRequest();
