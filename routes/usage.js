@@ -6,6 +6,40 @@ const db = require('../db/databaseConnector');
 const Usage = require('../models/Usage');
 const global = require('../globalFunctions');
 
+//Get amount of days clean from logged in client
+router.route('/clean')
+    .get((req, res) => {
+        const token = global.stripBearerToken(req.header('Authorization'));
+
+        auth.decodeToken(token, (error, payload) => {
+            if (error) {
+                console.log(error);
+                const err = Errors.noValidToken();
+                res.status(err.code).json(err);
+                return;
+            }
+
+            const email = payload.sub
+            db.query("SELECT DATEDIFF(CURDATE(), MAX(mdod.`Usage`.usedAt)) AS daysClean " +
+                "FROM mdod.Usage " +
+                "INNER JOIN mdod.Substance ON mdod.Usage.substanceId = mdod.Substance.id " +
+                "WHERE mdod.Usage.email = ?;", [email], (error, rows, fields) => {
+                    if (error) {
+                        const err = Errors.conflict();
+                        res.status(200).json(err);
+                        return;
+                    } else {
+                        const daysClean = rows[0].daysClean
+
+                        res.status(200).json({
+                            "daysClean": daysClean
+                        })
+                    }
+                });
+        })
+    });
+
+//CRUD Actions
 router.route('/:usageId?')
     .get((req, res) => {
         const token = global.stripBearerToken(req.header('Authorization'));
@@ -20,35 +54,35 @@ router.route('/:usageId?')
 
             const email = payload.sub
             db.query("SELECT mdod.Usage.id, " +
-                "mdod.Usage.substanceId, mdod.Usage.description, mdod.Substance.`type`, mdod.Substance.name, " + 
-                 "mdod.Substance.measuringUnit, mdod.Usage.usedAt " +
-                 "FROM mdod.Usage " +
-                 "INNER JOIN mdod.Substance ON mdod.Usage.substanceId = mdod.Substance.id " + 
-                 "WHERE mdod.Usage.email = ?;", [email], (error, rows, fields) => {
-                if (error) {
-                    const err = Errors.conflict();
-                    res.status(err.code).json(err);
-                    return;
-                } else {
-                    const usageId = rows[0].id;
-                    const substanceId = rows[0].substanceId;
-                    const description = rows[0].description;
-                    const type = rows[0].type;
-                    const name = rows[0].name;
-                    const measuringUnit = rows[0].measuringUnit
-                    const usedAt = rows[0].usedAt;
+                "mdod.Usage.substanceId, mdod.Usage.description, mdod.Substance.`type`, mdod.Substance.name, " +
+                "mdod.Substance.measuringUnit, mdod.Usage.usedAt " +
+                "FROM mdod.Usage " +
+                "INNER JOIN mdod.Substance ON mdod.Usage.substanceId = mdod.Substance.id " +
+                "WHERE mdod.Usage.email = ?;", [email], (error, rows, fields) => {
+                    if (error) {
+                        const err = Errors.conflict();
+                        res.status(err.code).json(err);
+                        return;
+                    } else {
+                        const usageId = rows[0].id;
+                        const substanceId = rows[0].substanceId;
+                        const description = rows[0].description;
+                        const type = rows[0].type;
+                        const name = rows[0].name;
+                        const measuringUnit = rows[0].measuringUnit
+                        const usedAt = rows[0].usedAt;
 
-                    res.status(200).json({
-                        "usageId": usageId,
-                        "substanceId": substanceId,
-                        "description": description,
-                        "type": type,
-                        "name": name,
-                        "measuringUnit": measuringUnit,
-                        "usedAt": usedAt
-                    })
-                }
-            });
+                        res.status(200).json({
+                            "usageId": usageId,
+                            "substanceId": substanceId,
+                            "description": description,
+                            "type": type,
+                            "name": name,
+                            "measuringUnit": measuringUnit,
+                            "usedAt": usedAt
+                        })
+                    }
+                });
         });
     })
     .post((req, res) => {
@@ -69,7 +103,8 @@ router.route('/:usageId?')
             if (usage._description) {
                 db.query("INSERT INTO mdod.Usage(email, substanceId, description) VALUES(?, ?, ?)", [email, usage._substanceId, usage._description], (error, result) => {
                     if (error) {
-                        console.log(error);rs
+                        console.log(error);
+                        rs
                         const err = Errors.conflict();
                         res.status(err.code).json(err);
                         return;
@@ -122,7 +157,7 @@ router.route('/:usageId?')
                     message: "Usage verwijderd."
                 })
             })
-        })
+        });
     })
     .put((req, res) => {
         const token = global.stripBearerToken(req.header('Authorization'));
