@@ -6,39 +6,6 @@ const db = require('../db/databaseConnector');
 const Usage = require('../models/Usage');
 const global = require('../globalFunctions');
 
-//Get amount of days clean from logged in client
-router.route('/clean')
-    .get((req, res) => {
-        const token = global.stripBearerToken(req.header('Authorization'));
-
-        auth.decodeToken(token, (error, payload) => {
-            if (error) {
-                console.log(error);
-                const err = Errors.noValidToken();
-                res.status(err.code).json(err);
-                return;
-            }
-
-            const email = payload.sub
-            db.query("SELECT DATEDIFF(CURDATE(), MAX(mdod.`Usage`.usedAt)) AS daysClean " +
-                "FROM mdod.Usage " +
-                "INNER JOIN mdod.Substance ON mdod.Usage.substanceId = mdod.Substance.id " +
-                "WHERE mdod.Usage.email = ?;", [email], (error, rows, fields) => {
-                    if (error) {
-                        const err = Errors.conflict();
-                        res.status(200).json(err);
-                        return;
-                    } else {
-                        const daysClean = rows[0].daysClean
-
-                        res.status(200).json({
-                            "daysClean": daysClean
-                        })
-                    }
-                });
-        })
-    });
-
 //CRUD Actions
 router.route('/:usageId?')
     .get((req, res) => {
@@ -197,6 +164,39 @@ router.route('/:usageId?')
                     message: "Usage geüpdated."
                 })
             })
+        });
+    });
+
+
+//Get amount of days clean from logged in client
+router.get('/clean/status', (req, res) => {
+        const token = global.stripBearerToken(req.header('Authorization'));
+
+        auth.decodeToken(token, (error, payload) => {
+            if (error) {
+                console.log(error);
+                const err = Errors.noValidToken();
+                res.status(err.code).json(err);
+                return;
+            }
+
+            const email = payload.sub
+            db.query("SELECT DATEDIFF(CURDATE(), MAX(mdod.`Usage`.usedAt)) AS daysClean " +
+                "FROM mdod.Usage " +
+                "INNER JOIN mdod.Substance ON mdod.Usage.substanceId = mdod.Substance.id " +
+                "WHERE mdod.Usage.email = ?;", [email], (error, rows, fields) => {
+                    if (error) {
+                        const err = Errors.conflict();
+                        res.status(200).json(err);
+                        return;
+                    } else {
+                        const daysClean = rows[0].daysClean
+
+                        res.status(200).json({
+                            "daysClean": daysClean
+                        })
+                    }
+                });
         });
     });
 
