@@ -1,7 +1,7 @@
 const Errors = require('./Errors');
 
 class Difficult_Moment {
-    constructor(lust, description){
+    constructor(description, lust){
         if(!(
             description && /^(.|\s){0,280}$/.test(description) &&
             lust && /^[0-9]*$/.test(lust)

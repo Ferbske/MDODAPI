@@ -26,10 +26,9 @@ router.post('/', (req, res) => {
                     res.status(error.code).json(error);
                     return;
                 }
-                if (rows.length > 0) {
+                else if (rows.length > 0) {
                     const lust = req.body.lust || '';
                     const description = req.body.description || '';
-
                     const moment = new Difficult_Moment(description, lust);
 
                     if(moment._description){
