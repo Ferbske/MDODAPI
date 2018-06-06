@@ -5,7 +5,7 @@ const auth = require('../auth/authentication');
 const db = require('../db/databaseConnector');
 const Errors = require('../models/Errors');
 
-router.route('/')
+router.route('/single_client')
 /**
  * Get all the addictions for a single client.
  */
@@ -43,7 +43,9 @@ router.route('/')
                 res.status(200).json(rows);
             })
         })
-    })
+    });
+
+router.route('/')
     /**
      * Create a single addiction for a single client. Client email will be set in the body.
      */
@@ -146,7 +148,6 @@ function checkPsychAndClient(req, res, payload, clientEmail) {
         }
 
 
-
         // Check if the client exists.
         db.query("SELECT email FROM mdod.`Client` WHERE email = ?;", [clientEmail], (error, rows, fields) => {
             if (error) {
@@ -163,4 +164,5 @@ function checkPsychAndClient(req, res, payload, clientEmail) {
         })
     });
 }
+
 module.exports = router;
