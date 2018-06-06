@@ -69,7 +69,7 @@ router.get('/', (req, res) => {
                     res.status(error.code).json(error);
                 }
                 else if (rows.length > 0) {
-                    db.query("SELECT lust, description, prevention, date_lust, Substance.`id`, Substance.name FROM mdod.Difficult_moment LEFT JOIN mdod.Substance ON Difficult_moment.substance_id = Substance.id WHERE email = ?;", [email], (error, rows) => {
+                    db.query("SELECT lust, description, prevention, date_lust, Substance.`id`, Substance.name FROM mdod.Difficult_moment LEFT JOIN mdod.Substance ON Difficult_moment.substance_id = Substance.id WHERE email = ? ORDER BY date_lust DESC;", [email], (error, rows) => {
                         if (error) {
                             const err = Errors.conflict();
                             res.status(err.code).json(err);
@@ -114,12 +114,12 @@ router.post('/client', (req, res) => {
                             let error = Errors.notFound();
                             res.status(error.code).json(error);
                         } else if(rows.length > 0) {
-                            db.query("SELECT lust, description, prevention, date_lust, Substance.name FROM mdod.Difficult_moment LEFT JOIN mdod.Substance ON Difficult_moment.substance_id = Substance.id WHERE email = ?;", [client_email], (error, rows) => {
+                            db.query("SELECT lust, description, prevention, date_lust, Substance.name FROM mdod.Difficult_moment LEFT JOIN mdod.Substance ON Difficult_moment.substance_id = Substance.id WHERE email = ? ORDER BY date_lust DESC;", [client_email], (error, rows) => {
                                 if (error) {
                                     const err = Errors.conflict();
                                     res.status(err.code).json(err);
                                     return;
-                                }"?"
+                                }
                                 res.status(200).json(rows);
                             });
                         }
