@@ -82,7 +82,8 @@ router.route('/:usageId?')
 
                     res.status(201).json({
                         usageId: result.insertId,
-                        message: "Usage aangemaakt"
+                        message: "Usage aangemaakt",
+                        notification: "Je hebt gebruikt. Neem contact op met je behandelaar."
                     })
                 })
             } else {
