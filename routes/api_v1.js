@@ -13,6 +13,7 @@ const global = require('../globalFunctions');
 const usage = require('./usage');
 const substance = require('./substance');
 const phone = require('./phonenumbers');
+const usageData = require('./usageData');
 
 //Routers for goals and risks and difficult moments
 router.use('/goal', goals);
@@ -22,6 +23,7 @@ router.use('/difficult_moment', difficult_moment);
 router.use('/usage', usage);
 router.use('/substance', substance);
 router.use('/phone', phone);
+router.use('/usage/client/data', usageData);
 
 /*
  * Role routes
