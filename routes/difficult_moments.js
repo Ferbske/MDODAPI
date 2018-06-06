@@ -67,7 +67,7 @@ router.get('/', (req, res) => {
                     res.status(error.code).json(error);
                 }
                 else if (rows.length > 0) {
-                    db.query("SELECT lust, description, date_lust, Substance.`id`, Substance.`type`, Substance.name FROM mdod.Difficult_moment LEFT JOIN mdod.Substance ON Difficult_moment.substance_id = Substance.id WHERE email = ?;", [email], (error, rows) => {
+                    db.query("SELECT lust, description, date_lust, Substance.`id`, Substance.name FROM mdod.Difficult_moment LEFT JOIN mdod.Substance ON Difficult_moment.substance_id = Substance.id WHERE email = ?;", [email], (error, rows) => {
                         if (error) {
                             const err = Errors.conflict();
                             res.status(err.code).json(err);
