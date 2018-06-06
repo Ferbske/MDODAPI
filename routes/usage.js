@@ -1,14 +1,12 @@
 const express = require('express');
 const router = express.Router({});
-const usageData = require('./usageData');
 const auth = require('../auth/authentication');
 const Errors = require('../models/Errors');
 const db = require('../db/databaseConnector');
 const Usage = require('../models/Usage');
 const global = require('../globalFunctions');
 
-//Psychologist routes
-router.use('/client/data', usageData);
+
 
 //CRUD Actions
 router.route('/:usageId?')
@@ -23,7 +21,7 @@ router.route('/:usageId?')
                 return;
             }
 
-            const email = payload.sub
+            const email = payload.sub;
             db.query("SELECT mdod.Usage.id, " +
                 "mdod.Usage.substanceId, mdod.Usage.description, mdod.Substance.`type`, mdod.Substance.name, " +
                 "mdod.Substance.measuringUnit, mdod.Usage.usedAt " +
