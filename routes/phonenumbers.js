@@ -25,7 +25,7 @@ router.get('/', (req, res) => {
                     res.status(error.code).json(error);
                 }
                 else if (rows.length > 0) {
-                    db.query("SELECT PNfirm, PNdr, PNbuddy, PNice FROM mdod.PhoneNumbers WHERE email = ?;", [email], (err, rows) => {
+                    db.query("SELECT id, PNfirm, PNdr, PNbuddy, PNice FROM mdod.PhoneNumbers WHERE email = ?;", [email], (err, rows) => {
                         if (error) {
                             const err = Errors.conflict();
                             res.status(err.code).json(err);
@@ -38,4 +38,43 @@ router.get('/', (req, res) => {
         }
     });
 });
+
+router.put('/', (req, res) => {
+    const token = global.stripBearerToken(req.header('Authorization'));
+    const data = auth.decodeToken(token, (err, payload) => {
+        if (err) {
+            console.log('Error handler: ' + err.message);
+            let error = Errors.noValidToken();
+            res.status(error.code).json(error);
+        } else {
+            const email = payload.sub;
+            db.query("SELECT email FROM mdod.Client WHERE email = ?;", [email], (error, rows) => {
+                if (error) {
+                    const err = Errors.unknownError();
+                    res.status(err.code).json(err);
+                    return;
+                }
+                if (rows.length < 1) {
+                    let error = Errors.notFound();
+                    res.status(error.code).json(error);
+                }
+                else if(rows.length > 0) {
+                    const id = req.body.id;
+                    const firm = req.body.firm || '';
+                    const dr = req.body.dr || '';
+                    const buddy = req.body.buddy || '';
+                    const ice = req.body.ice || '';
+                    db.query("REPLACE INTO mdod.PhoneNumbers (id ,email, PNfirm, PNdr, PNbuddy, PNice) VALUES (?, ?, ?, ?, ?, ?);", [id, email, firm, dr, buddy, ice], (err, result) => {
+                        if (err) {
+                            const err = Errors.conflict();
+                            res.status(err.code).json(err);
+                        }
+                        res.status(202).json({message: "Phonenumber changed"})
+                    })
+                }
+            });
+        }
+    });
+});
+
 module.exports = router;
