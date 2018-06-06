@@ -33,8 +33,9 @@ router.post('/', (req, res) => {
                     const moment = new Difficult_Moment(description, lust);
 
                     if(moment._description){
-                        db.query("INSERT INTO mdod.Difficult_moment(email, description, prevention, lust, substance_id) VALUES(?, ? ,?, ?)", [email, description, prevention, lust, substance_id], (error, result) => {
+                        db.query("INSERT INTO mdod.Difficult_moment(email, description, prevention, lust, substance_id) VALUES(?, ?, ?, ?, ?)", [email, description, prevention, lust, substance_id], (error, result) => {
                             if (error) {
+                                console.log(error);
                                 const err = Errors.conflict();
                                 res.status(err.code).json(err);
                                 return;
@@ -118,7 +119,7 @@ router.post('/client', (req, res) => {
                                     const err = Errors.conflict();
                                     res.status(err.code).json(err);
                                     return;
-                                }
+                                }"?"
                                 res.status(200).json(rows);
                             });
                         }
