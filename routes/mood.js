@@ -24,13 +24,12 @@ router.post('/', (req, res) => {
                 if (rows.length < 1) {
                     let error = Errors.notFound();
                     res.status(error.code).json(error);
-                }
-                else if (rows.length > 0) {
+                } else if (rows.length > 0) {
                     const value = req.body.value || '';
                     const description = req.body.description || '';
                     const mood = new Mood(value, description);
 
-                    if(mood._description){
+                    if (mood._description) {
                         db.query("INSERT INTO mdod.Mood(email, value, description) VALUES(?, ?, ?)", [email, value, description], (error, result) => {
                             if (error) {
                                 console.log(error);
@@ -38,7 +37,9 @@ router.post('/', (req, res) => {
                                 res.status(err.code).json(err);
                                 return;
                             }
-                            res.status(201).json({message: "Gemoedstoestand aangemaakt"})
+                            res.status(201).json({
+                                message: "Mood aangemaakt"
+                            });
                         });
                     }
                 }
@@ -65,8 +66,7 @@ router.get('/', (req, res) => {
                 if (rows.length < 1) {
                     let error = Errors.notFound();
                     res.status(error.code).json(error);
-                }
-                else if (rows.length > 0) {
+                } else if (rows.length > 0) {
                     db.query("SELECT value, description, addedDate FROM mdod.Mood WHERE email = ? ORDER BY addedDate DESC;", [email], (error, rows) => {
                         if (error) {
                             const err = Errors.conflict();
@@ -81,7 +81,39 @@ router.get('/', (req, res) => {
     });
 });
 
-router.post('/client', (req, res) => {
+router.get('/status', (req, res) => {
+    const token = global.stripBearerToken(req.header('Authorization'));
+
+    auth.decodeToken(token, (error, payload) => {
+        if (error) {
+            console.log(error);
+            const err = Errors.noValidToken();
+            res.status(err.code).json(err);
+            return;
+        }
+
+        const email = payload.sub;
+
+
+        db.query("SELECT DATEDIFF(CURDATE(), MAX(mdod.`Mood`.addedDate)) AS daysDifference " +
+            "FROM mdod.Mood " +
+            "WHERE mdod.Mood.email = ?;", [email], (error, rows, fields) => {
+                if (error) {
+                    const err = Errors.conflict();
+                    res.status(200).json(err);
+                    return;
+                } else {
+                    const daysDifference = rows[0].daysDifference;
+
+                    res.status(200).json({
+                        "daysDifference": daysDifference
+                    })
+                }
+            });
+    });
+});
+
+router.post('/client/status', (req, res) => {
     const token = global.stripBearerToken(req.header('Authorization'));
     const data = auth.decodeToken(token, (err, payload) => {
         if (err) {
@@ -99,8 +131,7 @@ router.post('/client', (req, res) => {
                 if (rows.length < 1) {
                     let error = Errors.notFound();
                     res.status(error.code).json(error);
-                }
-                else if(rows.length > 0) {
+                } else if (rows.length > 0) {
                     const client_email = req.body.email || '';
                     db.query("SELECT email FROM mdod.Client WHERE email = ?;", [client_email], (error, rows) => {
                         if (error) {
@@ -111,15 +142,22 @@ router.post('/client', (req, res) => {
                         if (rows.length < 1) {
                             let error = Errors.notFound();
                             res.status(error.code).json(error);
-                        } else if(rows.length > 0) {
-                            db.query("SELECT value, description, addedDate FROM mdod.Mood WHERE email = ? ORDER BY addedDate DESC;", [client_email], (error, rows) => {
-                                if (error) {
-                                    const err = Errors.conflict();
-                                    res.status(err.code).json(err);
-                                    return;
-                                }
-                                res.status(200).json(rows);
-                            });
+                        } else if (rows.length > 0) {
+                            db.query("SELECT DATEDIFF(CURDATE(), MAX(mdod.`Mood`.addedDate)) AS daysDifference " +
+                                "FROM mdod.Mood " +
+                                "WHERE mdod.Mood.email = ?;", [client_email], (error, rows, fields) => {
+                                    if (error) {
+                                        const err = Errors.conflict();
+                                        res.status(200).json(err);
+                                        return;
+                                    } else {
+                                        const daysDifference = rows[0].daysDifference;
+
+                                        res.status(200).json({
+                                            "daysDifference": daysDifference
+                                        })
+                                    }
+                                });
                         }
                     });
                 }
@@ -127,4 +165,5 @@ router.post('/client', (req, res) => {
         }
     });
 });
+
 module.exports = router;
