@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router({});
 const auth = require('../auth/authentication');
 const Errors = require('../models/Errors');
-const global = require('../globalFunctions');
 const db = require('../db/databaseConnector');
-const Difficult_Moment = require('../models/Difficult_Moment');
+const Mood = require('../models/Mood');
+const global = require('../globalFunctions');
 
 router.post('/', (req, res) => {
     const token = global.stripBearerToken(req.header('Authorization'));
@@ -26,21 +26,19 @@ router.post('/', (req, res) => {
                     res.status(error.code).json(error);
                 }
                 else if (rows.length > 0) {
-                    const lust = req.body.lust || '';
-                    const prevention = req.body.prevention || '';
+                    const value = req.body.value || '';
                     const description = req.body.description || '';
-                    const substance_id = req.body.substance_id || '';
-                    const moment = new Difficult_Moment(description, lust);
+                    const mood = new Mood(value, description);
 
-                    if(moment._description){
-                        db.query("INSERT INTO mdod.Difficult_moment(email, description, prevention, lust, substance_id) VALUES(?, ?, ?, ?, ?)", [email, description, prevention, lust, substance_id], (error, result) => {
+                    if(mood._description){
+                        db.query("INSERT INTO mdod.Mood(email, value, description) VALUES(?, ?, ?)", [email, value, description], (error, result) => {
                             if (error) {
                                 console.log(error);
                                 const err = Errors.conflict();
                                 res.status(err.code).json(err);
                                 return;
                             }
-                            res.status(201).json({message: "Moeilijk moment aangemaakt"})
+                            res.status(201).json({message: "Gemoedstoestand aangemaakt"})
                         });
                     }
                 }
@@ -69,7 +67,7 @@ router.get('/', (req, res) => {
                     res.status(error.code).json(error);
                 }
                 else if (rows.length > 0) {
-                    db.query("SELECT lust, description, prevention, date_lust, Substance.`id`, Substance.name FROM mdod.Difficult_moment LEFT JOIN mdod.Substance ON Difficult_moment.substance_id = Substance.id WHERE email = ? ORDER BY date_lust DESC;", [email], (error, rows) => {
+                    db.query("SELECT value, description, addedDate FROM mdod.Mood WHERE email = ? ORDER BY addedDate DESC;", [email], (error, rows) => {
                         if (error) {
                             const err = Errors.conflict();
                             res.status(err.code).json(err);
@@ -114,7 +112,7 @@ router.post('/client', (req, res) => {
                             let error = Errors.notFound();
                             res.status(error.code).json(error);
                         } else if(rows.length > 0) {
-                            db.query("SELECT lust, description, prevention, date_lust, Substance.name FROM mdod.Difficult_moment LEFT JOIN mdod.Substance ON Difficult_moment.substance_id = Substance.id WHERE email = ? ORDER BY date_lust DESC;", [client_email], (error, rows) => {
+                            db.query("SELECT value, description, addedDate FROM mdod.Mood WHERE email = ? ORDER BY addedDate DESC;", [client_email], (error, rows) => {
                                 if (error) {
                                     const err = Errors.conflict();
                                     res.status(err.code).json(err);

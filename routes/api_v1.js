@@ -11,7 +11,10 @@ const difficult_moment = require('./difficult_moments');
 const addiction = require('./addiction');
 const global = require('../globalFunctions');
 const usage = require('./usage');
+const usageData = require('./usageData');
+const mood = require('./mood');
 const substance = require('./substance');
+const phone = require('./phonenumbers');
 
 //Routers for goals and risks and difficult moments
 router.use('/goal', goals);
@@ -19,7 +22,10 @@ router.use('/risk', risks);
 router.use('/addiction', addiction);
 router.use('/difficult_moment', difficult_moment);
 router.use('/usage', usage);
+router.use('/usage/client/data', usageData);
+router.use('/mood', mood);
 router.use('/substance', substance);
+router.use('/phone', phone);
 
 /*
  * Role routes
@@ -39,6 +45,8 @@ router.get('/all/:role', (req, res) => {
             //Get all clients
             if (role === 'client') {
                 const email = payload.sub;
+
+                //Verify email
                 db.query("SELECT email FROM mdod.Psychologist WHERE email = ?;", [email], (error, rows) => {
 
                     //Query/DB Error
@@ -55,7 +63,7 @@ router.get('/all/:role', (req, res) => {
                         return;
                     }
 
-                    //Get clients by psycologist email
+                    //Get all clients
                     if (rows.length > 0) {
                         db.query("SELECT email, firstname, infix, lastname FROM mdod.Client", [email], (error, rows) => {
 
