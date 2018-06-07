@@ -5,9 +5,9 @@ class Client {
         if (!(
             email && /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z-.]{2,20}/.test(email) &&
             password && /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,80}$/.test(password) &&
-            firstname && /^[A-Za-z\-]{2,50}$/.test(firstname) &&
-            (infix === "" || infix && /^[A-Za-z]{2,8}(\s[A-Z-a-z]{2,8})*/.test(infix)) &&
-            lastname && /^[A-Za-z\-]{2,50}$/.test(lastname) &&
+            firstname && /^([^\d!@#$%^&*()=+~<>]){2,50}$/.test(firstname) &&
+            (infix === "" || infix && /^([^\d!@#$%^&*()=+~<>]){2,8}(\s[^\d!@#$%^&*()=+~<>]{2,8})*/.test(infix)) &&
+            lastname && /^([^\d!@#$%^&*()=+~<>]){2,50}$/.test(lastname) &&
             (phonenumber === "" || phonenumber && phonenumber.length < 14 && /^\+?\d{6,13}/.test(phonenumber)) &&
             (dob === "" || dob && /^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/.test(dob) &&
             (city === "" || city && /^[a-zA-Z]+(?:[\s-'"][a-zA-Z]+)*$/.test(city)) &&
