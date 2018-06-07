@@ -112,7 +112,7 @@ router.post('/client', (req, res) => {
                             let error = Errors.notFound();
                             res.status(error.code).json(error);
                         } else if(rows.length > 0) {
-                            db.query("SELECT value, description, addedDate WHERE email = ? ORDER BY addedDate DESC;", [client_email], (error, rows) => {
+                            db.query("SELECT value, description, addedDate FROM mdod.Mood WHERE email = ? ORDER BY addedDate DESC;", [client_email], (error, rows) => {
                                 if (error) {
                                     const err = Errors.conflict();
                                     res.status(err.code).json(err);
