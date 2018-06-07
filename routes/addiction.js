@@ -60,31 +60,69 @@ router.route('/')
                 return;
             }
 
+            // Get psychologist email;
+            const psychologistEmail = payload.sub;
+
             // Get the client email.
             const clientEmail = req.body.email || '';
 
-            checkPsychAndClient(req, res, payload, clientEmail);
-
-            const substanceId = req.body.substanceId || '';
-            db.query("INSERT INTO mdod.Addiction(substanceId, email) VALUES(?, ?);", [substanceId, clientEmail], (error, result) => {
+            // Check if the psychologist exists;
+            db.query("SELECT email FROM mdod.Psychologist WHERE email = ?;", [psychologistEmail], (error, rows, fields) => {
                 if (error) {
                     console.log(error);
                     const err = Errors.conflict();
                     res.status(err.code).json(err);
                     return;
                 }
-
-                if (result.affectedRows < 1) {
+                else if (rows.length < 1) {
+                    console.log("Hiezo in de forbidden???");
                     const error = Errors.forbidden();
                     res.status(error.code).json(error);
                     return;
-                }
+                } else {
 
-                res.status(201).json({
-                    message: "Verslaving aangemaakt"
-                })
-            })
-        })
+                    // Check if the client exists.
+                    db.query("SELECT email FROM mdod.`Client` WHERE email = ?;", [clientEmail], (error, rows, fields) => {
+                        if (error) {
+                            console.log(error);
+                            const err = Errors.conflict();
+                            res.status(err.code).json(err);
+                            return;
+                        }
+                        else if (rows.length < 1) {
+                            const error = Errors.notFound();
+                            res.status(error.code).json(error);
+                            return;
+                        } else {
+                            // Get the client email.
+                            const clientEmail = req.body.email || '';
+
+                            checkPsychAndClient(req, res, payload, clientEmail);
+
+                            const substanceId = req.body.substanceId || '';
+                            db.query("INSERT INTO mdod.Addiction(substanceId, email) VALUES(?, ?);", [substanceId, clientEmail], (error, result) => {
+                                if (error) {
+                                    console.log(error);
+                                    const err = Errors.conflict();
+                                    res.status(err.code).json(err);
+                                    return;
+                                }
+
+                                if (result.affectedRows < 1) {
+                                    const error = Errors.forbidden();
+                                    res.status(error.code).json(error);
+                                    return;
+                                }
+
+                                res.status(201).json({
+                                    message: "Verslaving aangemaakt"
+                                })
+                            })
+                        }
+                    });
+                }
+            });
+        });
     })
     /**
      * Update a single addiction for a single client.
