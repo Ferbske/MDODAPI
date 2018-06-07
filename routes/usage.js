@@ -1,12 +1,24 @@
 const express = require('express');
 const router = express.Router({});
+const usageData = require('./usageData');
 const auth = require('../auth/authentication');
 const Errors = require('../models/Errors');
 const db = require('../db/databaseConnector');
 const Usage = require('../models/Usage');
 const global = require('../globalFunctions');
 
+function checkIfClient(email, res){
+    db.query("SELECT email FROM mdod.Client WHERE email = ?", [email], (err, rows, fields) => {
+        if(rows.length < 1){
+            const error = Errors.forbidden();
+            res.status(error.code).json(error);
+            return;
+        }
+    });
+}
 
+//Psychologist routes
+router.use('/client/data', usageData);
 
 //CRUD Actions
 router.route('/:usageId?')
@@ -22,6 +34,8 @@ router.route('/:usageId?')
             }
 
             const email = payload.sub;
+            checkIfClient(email, res);
+
             db.query("SELECT mdod.Usage.id, " +
                 "mdod.Usage.substanceId, mdod.Usage.description, mdod.Substance.`type`, mdod.Substance.name, " +
                 "mdod.Substance.measuringUnit, mdod.Usage.usedAt " +
@@ -69,6 +83,8 @@ router.route('/:usageId?')
 
             const usage = new Usage(substanceId, description);
 
+            checkIfClient(email, res);
+
             if (usage._description) {
                 db.query("INSERT INTO mdod.Usage(email, substanceId, description) VALUES(?, ?, ?)", [email, usage._substanceId, usage._description], (error, result) => {
                     if (error) {
@@ -80,7 +96,8 @@ router.route('/:usageId?')
 
                     res.status(201).json({
                         usageId: result.insertId,
-                        message: "Usage aangemaakt"
+                        message: "Usage aangemaakt",
+                        notification: "Je hebt gebruikt. Neem contact op met je behandelaar."
                     })
                 })
             } else {
@@ -107,6 +124,9 @@ router.route('/:usageId?')
 
             // Get the email of the person who would like to delete the usage.
             const email = payload.sub;
+
+            checkIfClient(email, res);
+
             db.query("DELETE FROM mdod.Usage WHERE id = ? AND email = ?", [usageId, email], (error, result) => {
                 if (error) {
                     console.log(error);
@@ -147,6 +167,7 @@ router.route('/:usageId?')
             // Get the new description.
             const description = req.body.description || '';
 
+            checkIfClient(email, res);
             db.query("UPDATE mdod.Usage SET description = ? WHERE id = ? AND email = ?", [description, usageId, email], (error, result) => {
                 if (error) {
                     console.log(error);
@@ -172,7 +193,7 @@ router.route('/:usageId?')
 //Get amount of days clean from logged in client
 router.get('/clean/status', (req, res) => {
     const token = global.stripBearerToken(req.header('Authorization'));
-
+   
     auth.decodeToken(token, (error, payload) => {
         if (error) {
             console.log(error);
@@ -182,6 +203,9 @@ router.get('/clean/status', (req, res) => {
         }
 
         const email = payload.sub;
+        checkIfClient(email, res);
+
+
         db.query("SELECT DATEDIFF(CURDATE(), MAX(mdod.`Usage`.usedAt)) AS daysClean " +
             "FROM mdod.Usage " +
             "INNER JOIN mdod.Substance ON mdod.Usage.substanceId = mdod.Substance.id " +
