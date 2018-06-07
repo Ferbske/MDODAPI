@@ -8,7 +8,7 @@ class Client {
             firstname && /^[A-Za-z\-]{2,50}$/.test(firstname) &&
             (infix === "" || infix && /^[A-Za-z]{2,8}(\s[A-Z-a-z]{2,8})*/.test(infix)) &&
             lastname && /^[A-Za-z\-]{2,50}$/.test(lastname) &&
-            (phonenumber === "" || phonenumber && phonenumber.length < 14 && /^\+?\d{6,13}/.test(phonenumber)) &&
+            (phonenumber === "" || phonenumber && phonenumber.length < 14 && /^\+?\d{6,13}$/.test(phonenumber)) &&
             (dob === "" || dob && /^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/.test(dob) &&
             (city === "" || city && /^[a-zA-Z]+(?:[\s-'"][a-zA-Z]+)*$/.test(city)) &&
             (address === "" || address && /^([A-Za-z'\-]+\s)+\d+([A-Z-a-z]*)/.test(address)) &&
