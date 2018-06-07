@@ -19,30 +19,63 @@ router.route('/single_client')
                 res.status(err.code).json(err);
             }
 
-            const email = req.body.email || '';
+            // Get psychologist email;
+            const psychologistEmail = payload.sub;
 
-            checkPsychAndClient(req, res, payload, email);
+            // Get the client email.
+            const clientEmail = req.body.email || '';
 
-            db.query("SELECT mdod.Addiction.id, mdod.Addiction.substanceId, mdod.Addiction.email, mdod.Substance.name, mdod.Substance.measuringUnit\n" +
-                "FROM mdod.Addiction \n" +
-                "\tINNER JOIN mdod.Substance ON mdod.Addiction.substanceId = mdod.Substance.id\n" +
-                "\tWHERE mdod.Addiction.email = ?;", [email], (error, rows, fields) => {
+            // Check if the psychologist exists;
+            db.query("SELECT email FROM mdod.Psychologist WHERE email = ?;", [psychologistEmail], (error, rows, fields) => {
                 if (error) {
                     console.log(error);
                     const err = Errors.conflict();
                     res.status(err.code).json(err);
                     return;
                 }
-
-                if (rows.length < 1) {
-                    const error = Errors.notFound();
+                else if (rows.length < 1) {
+                    console.log("Hiezo in de forbidden???");
+                    const error = Errors.forbidden();
                     res.status(error.code).json(error);
                     return;
-                }
+                } else {
+                    // Check if the client exists.
+                    db.query("SELECT email FROM mdod.`Client` WHERE email = ?;", [clientEmail], (error, rows, fields) => {
+                        if (error) {
+                            console.log(error);
+                            const err = Errors.conflict();
+                            res.status(err.code).json(err);
+                            return;
+                        }
+                        else if (rows.length < 1) {
+                            const error = Errors.notFound();
+                            res.status(error.code).json(error);
+                            return;
+                        } else {
+                            db.query("SELECT mdod.Addiction.id, mdod.Addiction.substanceId, mdod.Addiction.email, mdod.Substance.name, mdod.Substance.measuringUnit\n" +
+                                "FROM mdod.Addiction \n" +
+                                "\tINNER JOIN mdod.Substance ON mdod.Addiction.substanceId = mdod.Substance.id\n" +
+                                "\tWHERE mdod.Addiction.email = ?;", [clientEmail], (error, rows, fields) => {
+                                if (error) {
+                                    console.log(error);
+                                    const err = Errors.conflict();
+                                    res.status(err.code).json(err);
+                                    return;
+                                }
 
-                res.status(200).json(rows);
-            })
-        })
+                                if (rows.length < 1) {
+                                    const error = Errors.notFound();
+                                    res.status(error.code).json(error);
+                                    return;
+                                }
+
+                                res.status(200).json(rows);
+                            });
+                        }
+                    });
+                }
+            });
+        });
     });
 
 router.route('/')
@@ -96,8 +129,6 @@ router.route('/')
                         } else {
                             // Get the client email.
                             const clientEmail = req.body.email || '';
-
-                            checkPsychAndClient(req, res, payload, clientEmail);
 
                             const substanceId = req.body.substanceId || '';
                             db.query("INSERT INTO mdod.Addiction(substanceId, email) VALUES(?, ?);", [substanceId, clientEmail], (error, result) => {
@@ -174,8 +205,6 @@ router.route('/')
                         } else {
                             // Get the client email.
                             const clientEmail = req.body.email || '';
-
-                            checkPsychAndClient(req, res, payload, clientEmail);
 
                             const addictionId = req.body.id || '';
                             const substanceId = req.body.substanceId || '';
@@ -276,49 +305,4 @@ router.route('/')
         });
     });
 
-function checkPsychAndClient(req, res, payload, clientEmail) {
-    let success = false;
-    // Get psychologist email;
-    const psychologistEmail = payload.sub;
-
-    // Check if the psychologist exists;
-    db.query("SELECT email FROM mdod.Psychologist WHERE email = ?;", [psychologistEmail], (error, rows, fields) => {
-        if (error) {
-            console.log(error);
-            const err = Errors.conflict();
-            res.status(err.code).json(err);
-            success = false;
-        }
-        else if (rows.length < 1) {
-            console.log("Hiezo in de forbidden???");
-            const error = Errors.forbidden();
-            res.status(error.code).json(error);
-            success = false;
-        } else {
-
-            // Check if the client exists.
-            db.query("SELECT email FROM mdod.`Client` WHERE email = ?;", [clientEmail], (error, rows, fields) => {
-                if (error) {
-                    console.log(error);
-                    const err = Errors.conflict();
-                    res.status(err.code).json(err);
-                    success = false;
-                }
-                else if (rows.length < 1) {
-                    const error = Errors.notFound();
-                    res.status(error.code).json(error);
-                    success = false;
-                } else {
-                    console.log("boven success = 1;");
-                    console.log(rows.length);
-                    success = true;
-                }
-
-            })
-        }
-    });
-    return success;
-}
-
-// 206
 module.exports = router;
