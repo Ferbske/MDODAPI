@@ -65,10 +65,28 @@ class Errors {
     /**
      * The requested resource could not be found but may be available in the future.
      * Subsequent requests by the client are permissible.
-     * @returns {Error}
+     * @returns {Error} Not Found, 404
      */
     static notFound() {
         return new Error("Not Found", 404);
+    }
+
+    /**
+     * The 520 error is used as a "catch-all response for when the origin server returns something unexpected",
+     * listing connection resets, large headers, and empty or invalid responses as common triggers.
+     * @returns {Error} Unknown Error, 520
+     */
+    static unknownError() {
+        return new Error("Unknown Error", 520);
+    }
+
+    /**
+     * Unofficial HTTP Response.
+     * This response is self reclaimed.
+     * @returns {Error} User Exists, 420
+     */
+    static userExists() {
+        return new Error("User Exists", 420);
     }
 }
 
