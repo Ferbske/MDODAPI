@@ -77,7 +77,7 @@ router.put('/', (req, res) => {
                     const buddy = new PhoneNumber(req.body.buddy) || '';
                     const ice = new PhoneNumber(req.body.ice) || '';
 
-                    if(id && firm._phonenumber && buddy._phonenumber && ice._phonenumber){
+                    if(id && (firm._phonenumber || firm._phonenumber === '') && (buddy._phonenumber || buddy._phonenumber === '')&& (ice._phonenumber || ice._phonenumber === '')){
                         db.query("REPLACE INTO mdod.PhoneNumbers (id ,email, PNfirm, PNbuddy, PNice) VALUES (?, ?, ?, ?, ?);", [id, email, firm._phonenumber, buddy._phonenumber, ice._phonenumber], (error, result) => {
                             if (error) {
                                 console.log(error);
