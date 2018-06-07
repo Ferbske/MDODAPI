@@ -46,9 +46,9 @@ router.route('/single_client')
     });
 
 router.route('/')
-    /**
-     * Create a single addiction for a single client. Client email will be set in the body.
-     */
+/**
+ * Create a single addiction for a single client. Client email will be set in the body.
+ */
     .post((req, res) => {
         const token = global.stripBearerToken(req.header('Authorization'));
 
@@ -126,9 +126,82 @@ router.route('/')
                 })
             })
         })
+    })
+    .delete((req, res) => {
+        const token = global.stripBearerToken(req.header('Authorization'));
+
+        auth.decodeToken(token, (error, payload) => {
+            if (error) {
+                console.log(error);
+                const err = Errors.noValidToken();
+                res.status(err.code).json(err);
+                return;
+            }
+
+            // Get psychologist email;
+            const psychologistEmail = payload.sub;
+
+            // Get the client email.
+            const clientEmail = req.body.email || '';
+
+            // Check if the psychologist exists;
+            db.query("SELECT email FROM mdod.Psychologist WHERE email = ?;", [psychologistEmail], (error, rows, fields) => {
+                if (error) {
+                    console.log(error);
+                    const err = Errors.conflict();
+                    res.status(err.code).json(err);
+                    return;
+                }
+                else if (rows.length < 1) {
+                    console.log("Hiezo in de forbidden???");
+                    const error = Errors.forbidden();
+                    res.status(error.code).json(error);
+                    return;
+                } else {
+
+                    // Check if the client exists.
+                    db.query("SELECT email FROM mdod.`Client` WHERE email = ?;", [clientEmail], (error, rows, fields) => {
+                        if (error) {
+                            console.log(error);
+                            const err = Errors.conflict();
+                            res.status(err.code).json(err);
+                            return;
+                        }
+                        else if (rows.length < 1) {
+                            const error = Errors.notFound();
+                            res.status(error.code).json(error);
+                            return;
+                        } else {
+                            const addictionId = req.body.id || '';
+
+                            console.log(addictionId);
+                            db.query("DELETE FROM mdod.Addiction WHERE id = ?", [addictionId], (error, result) => {
+                                if (error) {
+                                    console.log(error);
+                                    const err = Errors.conflict();
+                                    res.status(err.code).json(err);
+                                    return;
+                                }
+
+                                if (result.affectedRows < 1) {
+                                    const err = Errors.forbidden();
+                                    res.status(err.code).json(err);
+                                    return;
+                                }
+
+                                res.status(200).json({
+                                    message: "Addiction deleted."
+                                });
+                            });
+                        }
+                    });
+                }
+            });
+        });
     });
 
 function checkPsychAndClient(req, res, payload, clientEmail) {
+    let success = false;
     // Get psychologist email;
     const psychologistEmail = payload.sub;
 
@@ -138,31 +211,37 @@ function checkPsychAndClient(req, res, payload, clientEmail) {
             console.log(error);
             const err = Errors.conflict();
             res.status(err.code).json(err);
-            return;
+            success = false;
         }
-
-        if (rows.length < 1) {
+        else if (rows.length < 1) {
+            console.log("Hiezo in de forbidden???");
             const error = Errors.forbidden();
             res.status(error.code).json(error);
-            return;
+            success = false;
+        } else {
+
+            // Check if the client exists.
+            db.query("SELECT email FROM mdod.`Client` WHERE email = ?;", [clientEmail], (error, rows, fields) => {
+                if (error) {
+                    console.log(error);
+                    const err = Errors.conflict();
+                    res.status(err.code).json(err);
+                    success = false;
+                }
+                else if (rows.length < 1) {
+                    const error = Errors.notFound();
+                    res.status(error.code).json(error);
+                    success = false;
+                } else {
+                    console.log("boven success = 1;");
+                    console.log(rows.length);
+                    success = true;
+                }
+
+            })
         }
-
-
-        // Check if the client exists.
-        db.query("SELECT email FROM mdod.`Client` WHERE email = ?;", [clientEmail], (error, rows, fields) => {
-            if (error) {
-                console.log(error);
-                const err = Errors.conflict();
-                res.status(err.code).json(err);
-                return;
-            }
-
-            if (rows.length < 1) {
-                const error = Errors.notFound();
-                res.status(error.code).json(error);
-            }
-        })
     });
+    return success;
 }
 
 module.exports = router;
