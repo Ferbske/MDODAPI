@@ -11,9 +11,10 @@ const difficult_moment = require('./difficult_moments');
 const addiction = require('./addiction');
 const global = require('../globalFunctions');
 const usage = require('./usage');
+const usageData = require('./usageData');
+const mood = require('./mood');
 const substance = require('./substance');
 const phone = require('./phonenumbers');
-const usageData = require('./usageData');
 
 //Routers for goals and risks and difficult moments
 router.use('/goal', goals);
@@ -21,9 +22,10 @@ router.use('/risk', risks);
 router.use('/addiction', addiction);
 router.use('/difficult_moment', difficult_moment);
 router.use('/usage', usage);
+router.use('/usage/client/data', usageData);
+router.use('/mood', mood);
 router.use('/substance', substance);
 router.use('/phone', phone);
-router.use('/usage/client/data', usageData);
 
 /*
  * Role routes
