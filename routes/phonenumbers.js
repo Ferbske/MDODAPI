@@ -72,20 +72,31 @@ router.put('/', (req, res) => {
                 }
                 else if (rows.length > 0) {
 
-                    const id = req.body.id;
+                    const id = req.body.id || '';
                     const firm = new PhoneNumber(req.body.firm) || '';
                     const buddy = new PhoneNumber(req.body.buddy) || '';
                     const ice = new PhoneNumber(req.body.ice) || '';
 
-                    if (id && (firm._phonenumber || firm._phonenumber === '') && (buddy._phonenumber || buddy._phonenumber === '') && (ice._phonenumber || ice._phonenumber === '')) {
-                        db.query("REPLACE INTO mdod.PhoneNumbers (id ,email, PNfirm, PNbuddy, PNice) VALUES (?, ?, ?, ?, ?);", [id, email, firm._phonenumber, buddy._phonenumber, ice._phonenumber], (error, result) => {
-                            if (error) {
-                                console.log(error);
-                                const err = Errors.conflict();
-                                res.status(err.code).json(err);
-                            }
-                            res.status(202).json({message: "Phonenumber changed"})
-                        });
+                    if ((firm._phonenumber || firm._phonenumber === '') && (buddy._phonenumber || buddy._phonenumber === '') && (ice._phonenumber || ice._phonenumber === '')) {
+                        if(id === ''){
+                            db.query("REPLACE INTO mdod.PhoneNumbers (email, PNfirm, PNbuddy, PNice) VALUES ( ?, ?, ?, ?);", [email, firm._phonenumber, buddy._phonenumber, ice._phonenumber], (error, result) => {
+                                if (error) {
+                                    console.log(error);
+                                    const err = Errors.conflict();
+                                    res.status(err.code).json(err);
+                                }
+                                res.status(202).json({message: "Phonenumber changed"})
+                            });
+                        } else {
+                            db.query("REPLACE INTO mdod.PhoneNumbers (id ,email, PNfirm, PNbuddy, PNice) VALUES (?, ?, ?, ?, ?);", [id, email, firm._phonenumber, buddy._phonenumber, ice._phonenumber], (error, result) => {
+                                if (error) {
+                                    console.log(error);
+                                    const err = Errors.conflict();
+                                    res.status(err.code).json(err);
+                                }
+                                res.status(202).json({message: "Phonenumber changed"})
+                            });
+                        }
                     } else {
                         const err = Errors.badRequest();
                         res.status(err.code).json(err);
