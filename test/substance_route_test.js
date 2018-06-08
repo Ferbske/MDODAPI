@@ -7,7 +7,6 @@ chai.should();
 chai.use(chaiHttp);
 
 let token;
-let substanceId;
 
 const testSubstance = {
     name: 'Chai',
