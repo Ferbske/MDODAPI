@@ -9,7 +9,6 @@ class Substance {
             return Errors.badRequest();
         }
 
-        this._type = type;
         this._name = name;
         this._measuringUnit = measuringUnit;
     }
