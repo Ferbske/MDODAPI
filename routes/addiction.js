@@ -78,7 +78,7 @@ router.route('/single_client')
         });
     });
 
-router.route('/')
+router.route('/:addictionId?')
 /**
  * Create a single addiction for a single client. Client email will be set in the body.
  */
@@ -104,14 +104,11 @@ router.route('/')
                 if (error) {
                     console.log(error);
                     const err = Errors.conflict();
-                    res.status(err.code).json(err);
-                    return;
-                }
-                else if (rows.length < 1) {
+                    res.status(err.code).json(err)
+                }else if (rows.length < 1) {
                     console.log("Hiezo in de forbidden???");
                     const error = Errors.forbidden();
                     res.status(error.code).json(error);
-                    return;
                 } else {
 
                     // Check if the client exists.
@@ -120,12 +117,9 @@ router.route('/')
                             console.log(error);
                             const err = Errors.conflict();
                             res.status(err.code).json(err);
-                            return;
-                        }
-                        else if (rows.length < 1) {
+                        }else if (rows.length < 1) {
                             const error = Errors.notFound();
                             res.status(error.code).json(error);
-                            return;
                         } else {
                             // Get the client email.
                             const clientEmail = req.body.email || '';
@@ -181,13 +175,10 @@ router.route('/')
                     console.log(error);
                     const err = Errors.conflict();
                     res.status(err.code).json(err);
-                    return;
-                }
-                else if (rows.length < 1) {
+                }else if (rows.length < 1) {
                     console.log("Hiezo in de forbidden???");
                     const error = Errors.forbidden();
                     res.status(error.code).json(error);
-                    return;
                 } else {
 
                     // Check if the client exists.
@@ -196,17 +187,14 @@ router.route('/')
                             console.log(error);
                             const err = Errors.conflict();
                             res.status(err.code).json(err);
-                            return;
-                        }
-                        else if (rows.length < 1) {
+                        } else if (rows.length < 1) {
                             const error = Errors.notFound();
                             res.status(error.code).json(error);
-                            return;
                         } else {
                             // Get the client email.
                             const clientEmail = req.body.email || '';
 
-                            const addictionId = req.body.id || '';
+                            const addictionId = req.params.addictionId || '';
                             const substanceId = req.body.substanceId || '';
                             db.query("UPDATE mdod.Addiction SET substanceId = ?, email = ? WHERE id = ?", [substanceId, clientEmail, addictionId], (error, result) => {
                                 if (error) {
@@ -277,7 +265,7 @@ router.route('/')
                             res.status(error.code).json(error);
                             return;
                         } else {
-                            const addictionId = req.body.id || '';
+                            const addictionId = req.params.addictionId || '';
 
                             console.log(addictionId);
                             db.query("DELETE FROM mdod.Addiction WHERE id = ?", [addictionId], (error, result) => {
