@@ -359,7 +359,7 @@ router.delete("/:role", (req, res) => {
                         res.status(err.code).json(err);
                         return;
                     }
-                    res.status(202).json({message: "Client Verwijderd"})
+                    res.status(202).json({message: "Cliënt Verwijderd"})
                 });
             }
             else if (role === 'psychologist') {
@@ -369,7 +369,7 @@ router.delete("/:role", (req, res) => {
                         res.status(err.code).json(err);
                         return;
                     }
-                    res.status(200).json({message: "Psychologist Verwijderd"});
+                    res.status(200).json({message: "Psycholoog Verwijderd"});
                 });
             } else {
                 const err = Errors.badRequest();

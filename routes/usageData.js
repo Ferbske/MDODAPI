@@ -27,7 +27,7 @@ router.post('/', (req, res) => {
         }
 
         const psychEmail = payload.sub;
-        const clientEmail = req.body.email || '';
+        const clientEmail = req.body.email;
 
         checkIfPsych(psychEmail, res);
 

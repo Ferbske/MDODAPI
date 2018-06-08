@@ -4,6 +4,7 @@ const auth = require('../auth/authentication');
 const Errors = require('../models/Errors');
 const global = require('../globalFunctions');
 const db = require('../db/databaseConnector');
+const PhoneNumber = require('../models/PhoneNumber');
 
 router.get('/', (req, res) => {
     const token = global.stripBearerToken(req.header('Authorization'));
@@ -14,7 +15,7 @@ router.get('/', (req, res) => {
             res.status(error.code).json(error);
         } else {
             const email = payload.sub;
-            db.query("SELECT email FROM mdod.Client WHERE email = ?;", [email], (error, rows) => {
+            db.query("SELECT email, contact FROM mdod.Client WHERE email = ?;", [email], (error, rows, result) => {
                 if (error) {
                     const err = Errors.unknownError();
                     res.status(err.code).json(err);
@@ -25,14 +26,25 @@ router.get('/', (req, res) => {
                     res.status(error.code).json(error);
                 }
                 else if (rows.length > 0) {
-                    db.query("SELECT id, PNfirm, PNdr, PNbuddy, PNice FROM mdod.PhoneNumbers WHERE email = ?;", [email], (err, rows) => {
-                        if (error) {
-                            const err = Errors.conflict();
-                            res.status(err.code).json(err);
-                            return;
-                        }
-                        res.status(200).json(rows);
-                    })
+                    if(rows[0].contact === null){
+                        db.query("SELECT id, PNfirm, PNbuddy, PNice FROM mdod.PhoneNumbers WHERE email = ?;", [email], (err, rows) => {
+                            if (error) {
+                                const err = Errors.conflict();
+                                res.status(err.code).json(err);
+                                return;
+                            }
+                            res.status(200).json(rows);
+                        })
+                    }else {
+                        db.query("SELECT id, PNfirm, Psychologist.phonenumber, PNbuddy, PNice FROM mdod.PhoneNumbers LEFT JOIN mdod.`Client` ON PhoneNumbers.email = Client.email LEFT JOIN mdod.Psychologist ON Psychologist.email = Client.contact WHERE Client.email = ?;", [email], (err, rows) => {
+                            if (error) {
+                                const err = Errors.conflict();
+                                res.status(err.code).json(err);
+                                return;
+                            }
+                            res.status(200).json(rows);
+                        })
+                    }
                 }
             });
         }
@@ -59,18 +71,25 @@ router.put('/', (req, res) => {
                     res.status(error.code).json(error);
                 }
                 else if(rows.length > 0) {
+
                     const id = req.body.id;
-                    const firm = req.body.firm || '';
-                    const dr = req.body.dr || '';
-                    const buddy = req.body.buddy || '';
-                    const ice = req.body.ice || '';
-                    db.query("REPLACE INTO mdod.PhoneNumbers (id ,email, PNfirm, PNdr, PNbuddy, PNice) VALUES (?, ?, ?, ?, ?, ?);", [id, email, firm, dr, buddy, ice], (err, result) => {
-                        if (err) {
-                            const err = Errors.conflict();
-                            res.status(err.code).json(err);
-                        }
-                        res.status(202).json({message: "Phonenumber changed"})
-                    })
+                    const firm = new PhoneNumber(req.body.firm) || '';
+                    const buddy = new PhoneNumber(req.body.buddy) || '';
+                    const ice = new PhoneNumber(req.body.ice) || '';
+
+                    if(id && (firm._phonenumber || firm._phonenumber === '') && (buddy._phonenumber || buddy._phonenumber === '')&& (ice._phonenumber || ice._phonenumber === '')){
+                        db.query("REPLACE INTO mdod.PhoneNumbers (id ,email, PNfirm, PNbuddy, PNice) VALUES (?, ?, ?, ?, ?);", [id, email, firm._phonenumber, buddy._phonenumber, ice._phonenumber], (error, result) => {
+                            if (error) {
+                                console.log(error);
+                                const err = Errors.conflict();
+                                res.status(err.code).json(err);
+                            }
+                            res.status(202).json({message: "Phonenumber changed"})
+                        });
+                    }else{
+                        const err = Errors.badRequest();
+                        res.status(err.code).json(err);
+                    }
                 }
             });
         }
