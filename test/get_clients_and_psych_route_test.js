@@ -24,14 +24,19 @@ function deleteClient() {
 
 describe('Update client and psychologist ', function () {
     this.timeout(10000);
+    let clientToken = '';
+    let psychToken = '';
 
     before(function () {
         deletePsychologist();
         deleteClient();
 
+
     });
 
-    it('PSYCHOLOGIST: INSERT A PSYCHOLOGIST FOR TESTING', (done) => {
+    console.log(clientToken);
+
+    it('TEST1', (done) => {
         chai.request(index)
             .post('/api/register/psychologist')
             .set('Content-Type', 'application/json')
@@ -50,8 +55,7 @@ describe('Update client and psychologist ', function () {
                 done();
             });
     });
-
-    it('CLIENT: INSERT CLIENT FOR TESTING', (done) => {
+    it('TEST2', (done) => {
         chai.request(index)
             .post('/api/register/client')
             .set('Content-Type', 'application/json')
@@ -63,9 +67,9 @@ describe('Update client and psychologist ', function () {
                 "email": "sjaak@gmail.com",
                 "password": "qwerty123",
                 "phonenumber": "062345678",
-                "city" : "Breda",
-                "adress" : "Zuidsingel 8",
-                "zipcode" : "6969 HB"
+                "city": "Breda",
+                "adress": "Zuidsingel 8",
+                "zipcode": "6969 HB"
             })
             .end((err, res) => {
                 res.should.have.status(201);
@@ -73,12 +77,39 @@ describe('Update client and psychologist ', function () {
                 done();
             });
     });
+    it('TEST3', (done) => {
+        chai.request(index)
+            .post('/api/login/client')
+            .set('Content-Type', 'application/json')
+            .send({
+                "email": "sjaak@gmail.com",
+                "password": "qwerty123"
+            })
+            .end((err, res) => {
+                let result = JSON.parse(res.text);
+                clientToken = result.token;
+                done();
+            });
+    });
+    it('TEST4', (done) => {
+        chai.request(index)
+            .post('/api/login/psychologist')
+            .set('Content-Type', 'application/json')
+            .send({
+                "email": "stijn@gmail.com",
+                "password": "qwerty123"
+            })
+            .end((err, res) => {
+                psychToken = res.body.token;
+                done();
+            });
+    });
 
-    it('CLIENT: should return an array of clients', (done) => {
+
+    it('PSYCHOLOOG: should return an array of clients', (done) => {
         chai.request(index)
             .get('/api/v1/all/client')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
+            .set('Authorization', 'Bearer ' + psychToken)
             .end((err, res) => {
                 res.should.have.status(200);
                 res.body.should.be.a('array');
@@ -86,23 +117,11 @@ describe('Update client and psychologist ', function () {
             });
     });
 
-    it('CLIENT: should return an invalid token error', (done) => {
-        chai.request(index)
-            .get('/api/v1/all/client')
-            .set('X-Access-Token', 'yJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
-            .end((err, res) => {
-                res.should.have.status(498);
-                res.body.should.be.a('object');
-                done();
-            });
-    });
 
-    it('CLIENT: should return a client for a psychologist', (done) => {
+    it('PSYCHOLOOG: should return a client for a psychologist', (done) => {
         chai.request(index)
             .post('/api/v1/specific/client')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
+            .set('Authorization', 'Bearer ' + psychToken)
             .set('Content-Type', 'application/json')
             .send({
                 "email": "sjaak@gmail.com",
@@ -114,27 +133,11 @@ describe('Update client and psychologist ', function () {
             });
     });
 
-    it('CLIENT: should return an invalid token error', (done) => {
-        chai.request(index)
-            .post('/api/v1/specific/client')
-            .set('X-Access-Token', 'yJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
-            .set('Content-Type', 'application/json')
-            .send({
-                "email": "sjaak@gmail.com",
-            })
-            .end((err, res) => {
-                res.should.have.status(498);
-                res.body.should.be.a('object');
-                done();
-            });
-    });
 
-    it('CLIENT: should return a not found error for having an invalid email', (done) => {
+    it('PSYCHOLOOG: should return a not found error for having an invalid email', (done) => {
         chai.request(index)
             .post('/api/v1/specific/client')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
+            .set('Authorization', 'Bearer ' + psychToken)
             .set('Content-Type', 'application/json')
             .send({
                 "email": "jaak@gmail.com",
@@ -146,11 +149,10 @@ describe('Update client and psychologist ', function () {
             });
     });
 
-    it('CLIENT: should return a not found error when no email is provided in the body', (done) => {
+    it('PSYCHOLOOG: should return a not found error when no email is provided in the body', (done) => {
         chai.request(index)
             .post('/api/v1/specific/client')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
+            .set('Authorization', 'Bearer ' + psychToken)
             .set('Content-Type', 'application/json')
             .send({
                "email": ""
@@ -162,11 +164,10 @@ describe('Update client and psychologist ', function () {
             });
     });
 
-    it('CLIENT: should return a bad request error for having a bad route', (done) => {
+    it('PSYCHOLOOG: should return a bad request error for having a bad route', (done) => {
         chai.request(index)
             .post('/api/v1/specific/cliend')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
+            .set('Authorization', 'Bearer ' + psychToken)
             .set('Content-Type', 'application/json')
             .send({
                 "email": "sjaak@gmail.com",
@@ -181,8 +182,7 @@ describe('Update client and psychologist ', function () {
     it('PSYCHOLOOG: should return a 200 status and has added a psycholoog to a client', (done) => {
         chai.request(index)
             .put('/api/v1/pickclient')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
+            .set('Authorization', 'Bearer ' + psychToken)
             .set('Content-Type', 'application/json')
             .send({
                 "email": "sjaak@gmail.com",
@@ -197,8 +197,7 @@ describe('Update client and psychologist ', function () {
     it('PSYCHOLOOG: should return a 404 status when given a invalid client', (done) => {
         chai.request(index)
             .put('/api/v1/pickclient')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
+            .set('Authorization', 'Bearer ' + psychToken)
             .set('Content-Type', 'application/json')
             .send({
                 "email": "jaak@gmail.com",
@@ -213,14 +212,13 @@ describe('Update client and psychologist ', function () {
     it('PSYCHOLOOG: should return a 498 status for an invalid token when given a valid client', (done) => {
         chai.request(index)
             .put('/api/v1/pickclient')
-            .set('X-Access-Token', 'yJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
+            .set('Authorization', 'Bearer ' + psychToken + 'foute token')
             .set('Content-Type', 'application/json')
             .send({
                 "email": "sjaak@gmail.com",
             })
             .end((err, res) => {
-                res.should.have.status(498);
+                res.should.not.have.status(200);
                 res.body.should.be.a('object');
                 done();
             });
@@ -229,8 +227,7 @@ describe('Update client and psychologist ', function () {
     it('PSYCHOLOOG: should return a 400 status for an invalid route when given a valid client', (done) => {
         chai.request(index)
             .put('/api/v1/pickcliend')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg1NDg4MTQsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzY4NDgxNH0.wU8VCIlRLPZjkybrbgXA88YXzcmunxA3xpBrlvk5ELzIDk-Y8n67PzohaZJjXFHvyEQ8-v2cqrxq7-0m5t7JEQ')
+            .set('Authorization', 'Bearer ' + psychToken)
             .set('Content-Type', 'application/json')
             .send({
                 "email": "sjaak@gmail.com"
