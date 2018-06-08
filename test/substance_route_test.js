@@ -9,6 +9,23 @@ chai.use(chaiHttp);
 let token;
 let substanceId;
 
+const testSubstance = {
+    name: 'Chai',
+    measuringUnit: ""
+};
+
+function deleteTestSubstance() {
+    db.query("DELETE FROM mdod.Substance WHERE name = ? AND measuringUnit = ?;", [testSubstance.name, testSubstance.measuringUnit], (error, result) => {
+        if (error) {
+            console.log(error);
+        }
+
+        if (result.affectedRows < 1) {
+            console.log("Affected rows is 0");
+        }
+    })
+}
+
 describe('Substance', () => {
 
     before((done) => {
@@ -68,6 +85,26 @@ describe('Substance', () => {
                 res.body.should.have.property("timestamp");
                 done();
             });
+    });
+
+    it('should return status 201 when substance is successfully inserted', (done) => {
+        chai.request(index)
+            .post('/api/v1/substance')
+            .set('Content-Type', 'application/json')
+            .set("Authorization", "Bearer " + token)
+            .send(testSubstance)
+            .end((err, res) => {
+                res.should.have.status(201);
+                res.body.should.be.a('object');
+                res.body.should.have.property('message');
+                done();
+            })
+
+    });
+
+    after((done)=> {
+        deleteTestSubstance();
+        done();
     });
 });
 
