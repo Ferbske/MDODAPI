@@ -26,7 +26,7 @@ router.get('/', (req, res) => {
                     res.status(error.code).json(error);
                 }
                 else if (rows.length > 0) {
-                    if(rows[0].contact === null){
+                    if (rows[0].contact === null) {
                         db.query("SELECT id, PNfirm, PNbuddy, PNice FROM mdod.PhoneNumbers WHERE email = ?;", [email], (err, rows) => {
                             if (error) {
                                 const err = Errors.conflict();
@@ -35,7 +35,7 @@ router.get('/', (req, res) => {
                             }
                             res.status(200).json(rows);
                         })
-                    }else {
+                    } else {
                         db.query("SELECT id, PNfirm, Psychologist.phonenumber, PNbuddy, PNice FROM mdod.PhoneNumbers LEFT JOIN mdod.`Client` ON PhoneNumbers.email = Client.email LEFT JOIN mdod.Psychologist ON Psychologist.email = Client.contact WHERE Client.email = ?;", [email], (err, rows) => {
                             if (error) {
                                 const err = Errors.conflict();
@@ -70,14 +70,14 @@ router.put('/', (req, res) => {
                     let error = Errors.notFound();
                     res.status(error.code).json(error);
                 }
-                else if(rows.length > 0) {
+                else if (rows.length > 0) {
 
                     const id = req.body.id;
                     const firm = new PhoneNumber(req.body.firm) || '';
                     const buddy = new PhoneNumber(req.body.buddy) || '';
                     const ice = new PhoneNumber(req.body.ice) || '';
 
-                    if(id && (firm._phonenumber || firm._phonenumber === '') && (buddy._phonenumber || buddy._phonenumber === '')&& (ice._phonenumber || ice._phonenumber === '')){
+                    if (id && (firm._phonenumber || firm._phonenumber === '') && (buddy._phonenumber || buddy._phonenumber === '') && (ice._phonenumber || ice._phonenumber === '')) {
                         db.query("REPLACE INTO mdod.PhoneNumbers (id ,email, PNfirm, PNbuddy, PNice) VALUES (?, ?, ?, ?, ?);", [id, email, firm._phonenumber, buddy._phonenumber, ice._phonenumber], (error, result) => {
                             if (error) {
                                 console.log(error);
@@ -86,7 +86,7 @@ router.put('/', (req, res) => {
                             }
                             res.status(202).json({message: "Phonenumber changed"})
                         });
-                    }else{
+                    } else {
                         const err = Errors.badRequest();
                         res.status(err.code).json(err);
                     }
