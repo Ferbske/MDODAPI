@@ -31,8 +31,9 @@ router.route('/:usageId?')
                     res.status(error.code).json(error);
                     return;
                 } else {
-                    db.query("SELECT mdod.Usage.id, mdod.Usage.substanceId, mdod.Usage.description, " +
+                    db.query("SELECT mdod.Usage.id, mdod.Usage.substanceId, " +
                         "mdod.Substance.name, mdod.Substance.measuringUnit, mdod.Usage.usedAt " +
+                        "mdod.Usage.location, mdod.Usage.cause, mdod.Usage.amount, mdod.Usage.mood " +
                         "FROM mdod.Usage " +
                         "INNER JOIN mdod.Substance ON mdod.Usage.substanceId = mdod.Substance.id " +
                         "WHERE mdod.Usage.email = ? " +
@@ -60,10 +61,13 @@ router.route('/:usageId?')
                 res.status(err.code).json(err);
             }
             const email = payload.sub;
-            const description = req.body.description || '';
+            const location = req.body.location;
+            const amount = req.body.amount;
+            const cause = req.body.cause;
+            const mood = req.body.mood;
             const substanceId = req.body.substanceId;
 
-            const usage = new Usage(substanceId, description);
+            const usage = new Usage(substanceId, location, cause, amount, mood);
 
             db.query("SELECT email FROM mdod.Client WHERE email = ?", [email], (err, rows, fields) => {
                 if (rows.length < 1) {
@@ -71,9 +75,10 @@ router.route('/:usageId?')
                     res.status(error.code).json(error);
                     return;
                 } else {
-
                     if (usage._description) {
-                        db.query("INSERT INTO mdod.Usage(email, substanceId, description) VALUES(?, ?, ?)", [email, usage._substanceId, usage._description], (error, result) => {
+                        db.query("INSERT INTO mdod.Usage" + 
+                        "(email, substanceId, location, cause, amount, mood) VALUES(?, ?, ?, ?, ?, ?)", 
+                        [email, usage._substanceId, usage._location, usage._cause, usage._amount, usage._mood], (error, result) => {
                             if (error) {
                                 console.log(error);
                                 const err = Errors.conflict();
@@ -160,7 +165,8 @@ router.route('/:usageId?')
             const usageId = req.params.usageId || '';
 
             // Get the new description.
-            const description = req.body.description || '';
+            const cause = req.body.cause || '';
+            const location = req.body.location || '';
 
             db.query("SELECT email FROM mdod.Client WHERE email = ?", [email], (err, rows, fields) => {
                 if (rows.length < 1) {
@@ -168,7 +174,8 @@ router.route('/:usageId?')
                     res.status(error.code).json(error);
                     return;
                 } else {
-                    db.query("UPDATE mdod.Usage SET description = ? WHERE id = ? AND email = ?", [description, usageId, email], (error, result) => {
+                    db.query("UPDATE mdod.Usage SET location = ?, cause = ?" +
+                    "WHERE id = ? AND email = ?", [location, cause, usageId, email], (error, result) => {
                         if (error) {
                             console.log(error);
                             const err = Errors.conflict();
