@@ -27,8 +27,6 @@ describe('Goal', () => {
                         console.log("Goal Error ==== " + err);
                     }
                     token = res.body.token;
-                    console.log("RES ===== " + res.body.token);
-                    console.log(token);
                 });
         });
     }
