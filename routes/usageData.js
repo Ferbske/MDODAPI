@@ -29,13 +29,14 @@ router.post('/', (req, res) => {
             } else {
                 if (clientEmail) {
                     db.query("SELECT mdod.Usage.id, mdod.Usage.substanceId, " +
-                    "mdod.Substance.name, mdod.Substance.measuringUnit, mdod.Usage.usedAt " +
+                    "mdod.Substance.name, mdod.Substance.measuringUnit, mdod.Usage.usedAt, " +
                     "mdod.Usage.location, mdod.Usage.cause, mdod.Usage.amount, mdod.Usage.mood " +
                     "FROM mdod.Usage " +
                     "INNER JOIN mdod.Substance ON mdod.Usage.substanceId = mdod.Substance.id " +
                     "WHERE mdod.Usage.email = ? " +
                     "ORDER BY mdod.Usage.usedAt DESC;", [clientEmail], (error, rows, fields) => {
                             if (error) {
+                                console.log(error);
                                 const err = Errors.conflict();
                                 res.status(err.code).json(err);
                                 return;

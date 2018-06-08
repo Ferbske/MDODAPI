@@ -31,7 +31,7 @@ router.route('/:usageId?')
                     res.status(error.code).json(error);
                 } else {
                     db.query("SELECT mdod.Usage.id, mdod.Usage.substanceId, " +
-                        "mdod.Substance.name, mdod.Substance.measuringUnit, mdod.Usage.usedAt " +
+                        "mdod.Substance.name, mdod.Substance.measuringUnit, mdod.Usage.usedAt, " +
                         "mdod.Usage.location, mdod.Usage.cause, mdod.Usage.amount, mdod.Usage.mood " +
                         "FROM mdod.Usage " +
                         "INNER JOIN mdod.Substance ON mdod.Usage.substanceId = mdod.Substance.id " +
@@ -91,7 +91,7 @@ router.route('/:usageId?')
                                     })
                                 })
                         } else {
-                            res.status(400).json({"message": "ALLES KAPOT"});
+                            res.status(400).json({"message": "Undefined error"});
                         }
                     }
                 });
