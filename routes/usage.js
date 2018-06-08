@@ -41,7 +41,8 @@ router.route('/:usageId?')
                 "mdod.Substance.measuringUnit, mdod.Usage.usedAt " +
                 "FROM mdod.Usage " +
                 "INNER JOIN mdod.Substance ON mdod.Usage.substanceId = mdod.Substance.id " +
-                "WHERE mdod.Usage.email = ?;", [email], (error, rows, fields) => {
+                "WHERE mdod.Usage.email = ? " + 
+                "ORDER BY mdod.Used.usedAt DESC;", [email], (error, rows, fields) => {
                     if (error) {
                         const err = Errors.conflict();
                         res.status(err.code).json(err);
