@@ -33,7 +33,8 @@ router.post('/', (req, res) => {
 
         if (clientEmail) {
             db.query("SELECT mdod.Usage.email, mdod.`Usage`.substanceId, mdod.`Usage`.description, " +
-                "mdod.`Usage`.usedAt FROM mdod.`Usage` WHERE email = ?", [clientEmail], (error, rows, fields) => {
+                "mdod.`Usage`.usedAt FROM mdod.`Usage` WHERE email = ?" + 
+                "ORDER BY mdod.Used.usedAt DESC;", [clientEmail], (error, rows, fields) => {
                     if (error) {
                         console.log(error);
                         const err = Errors.conflict();
