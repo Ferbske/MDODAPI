@@ -134,7 +134,7 @@ router.route('/')
                             })
                         })
                     } else {
-                        res.status(note.code).json(note);
+                        res.status(400).json(note);
                     }
                 });
             })
