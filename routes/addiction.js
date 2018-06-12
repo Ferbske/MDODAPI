@@ -51,7 +51,7 @@ router.route('/single_client')
                             res.status(error.code).json(error);
                             return;
                         } else {
-                            db.query("SELECT mdod.Addiction.id, mdod.Addiction.substanceId, mdod.Addiction.email, mdod.Substance.name, mdod.Substance.measuringUnit\n" +
+                            db.query("SELECT mdod.Addiction.id, mdod.Addiction.substanceId, mdod.Addiction.email, mdod.Substance.name\n" +
                                 "FROM mdod.Addiction \n" +
                                 "\tINNER JOIN mdod.Substance ON mdod.Addiction.substanceId = mdod.Substance.id\n" +
                                 "\tWHERE mdod.Addiction.email = ?;", [clientEmail], (error, rows, fields) => {
