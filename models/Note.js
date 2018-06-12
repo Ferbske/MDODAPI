@@ -7,7 +7,9 @@ class Note {
         )) {
             return Errors.badRequest();
         }
-    }
+
+        this._description = description;
+    };
 }
 
 module.exports = Note;
