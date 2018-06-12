@@ -29,18 +29,28 @@ router.post('/', (req, res) => {
                     const lust = req.body.lust || '';
                     const prevention = req.body.prevention || '';
                     const description = req.body.description || '';
-                    const substance_id = req.body.substance_id || '';
+                    const substance = req.body.substance || '';
                     const moment = new Difficult_Moment(description, lust);
 
                     if(moment._description){
-                        db.query("INSERT INTO mdod.Difficult_moment(email, description, prevention, lust, substance_id) VALUES(?, ?, ?, ?, ?)", [email, description, prevention, lust, substance_id], (error, result) => {
+                        db.query("SELECT id FROM mdod.Substance WHERE name = ?", [substance], (error, rows, fields) => {
                             if (error) {
                                 console.log(error);
                                 const err = Errors.conflict();
                                 res.status(err.code).json(err);
                                 return;
+                            }else{
+                                const substance_id = rows[0].id;
+                                db.query("INSERT INTO mdod.Difficult_moment(email, description, prevention, lust, substance_id) VALUES(?, ?, ?, ?, ?)", [email, description, prevention, lust, substance_id], (error, result) => {
+                                    if (error) {
+                                        console.log(error);
+                                        const err = Errors.conflict();
+                                        res.status(err.code).json(err);
+                                        return;
+                                    }
+                                    res.status(201).json({message: "Moeilijk moment aangemaakt"});
+                                });
                             }
-                            res.status(201).json({message: "Moeilijk moment aangemaakt"})
                         });
                     }
                 }
