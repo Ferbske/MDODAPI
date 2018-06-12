@@ -24,13 +24,14 @@ function deleteClient() {
 
 describe('Update client and psychologist ', function () {
     this.timeout(10000);
-
+    let psychToken = '';
+    let clientToken = '';
     before(function () {
         deletePsychologist();
         deleteClient();
     });
 
-    it('PSYCHOLOGIST: INSERT A PSYCHOLOGIST FOR TESTING', (done) => {
+    it('INSERT A PSYCHOLOGIST FOR TESTING', (done) => {
         chai.request(index)
             .post('/api/register/psychologist')
             .set('Content-Type', 'application/json')
@@ -50,21 +51,16 @@ describe('Update client and psychologist ', function () {
             });
     });
 
-    it('PSYCHOLOGIST: invalid token', (done) => {
+    it('LOGGING IN WITH A PSYCHOLOGIST FOR TESTING', (done) => {
         chai.request(index)
-            .put('/api/psychologist')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKVQiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
+            .post('/api/login/psychologist')
+            .set('Content-Type', 'application/json')
             .send({
-                "firstname": "stein",
-                "infix": "van",
-                "lastname": "Veen",
-                "phonenumber": "0629456850",
-                "location": "Bergen op Zoom"
+                "email": "stijn@gmail.com",
+                "password": "qwerty123"
             })
             .end((err, res) => {
-                res.should.have.status(498);
-                res.body.should.be.a('object');
+                psychToken = res.body.token;
                 done();
             });
     });
@@ -72,8 +68,7 @@ describe('Update client and psychologist ', function () {
     it('PSYCHOLOGIST: invalid route', (done) => {
         chai.request(index)
             .put('/api/psychologis')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
+            .set('Authorization', 'Bearer ' + psychToken)
             .send({
                 "firstname": "stein",
                 "infix": "van",
@@ -91,8 +86,7 @@ describe('Update client and psychologist ', function () {
     it('PSYCHOLOGIST: update firstname with valid information', (done) => {
         chai.request(index)
             .put('/api/psychologist')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
+            .set('Authorization', 'Bearer ' + psychToken)
             .send({
                 "firstname": "stein",
                 "infix": "van",
@@ -110,8 +104,7 @@ describe('Update client and psychologist ', function () {
     it('PSYCHOLOGIST: update lastname with valid information', (done) => {
         chai.request(index)
             .put('/api/psychologist')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
+            .set('Authorization', 'Bearer ' + psychToken)
             .send({
                 "firstname": "stein",
                 "infix": "van",
@@ -129,8 +122,7 @@ describe('Update client and psychologist ', function () {
     it('PSYCHOLOGIST: update infix with valid information, (empty infix)', (done) => {
         chai.request(index)
             .put('/api/psychologist')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
+            .set('Authorization', 'Bearer ' + psychToken)
             .send({
                 "firstname": "stein",
                 "infix": "",
@@ -148,8 +140,7 @@ describe('Update client and psychologist ', function () {
     it('PSYCHOLOGIST: update phonenumber with valid information, (with landcode)', (done) => {
         chai.request(index)
             .put('/api/psychologist')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
+            .set('Authorization', 'Bearer ' + psychToken)
             .send({
                 "firstname": "stein",
                 "infix": "",
@@ -167,8 +158,7 @@ describe('Update client and psychologist ', function () {
     it('PSYCHOLOGIST: update location with valid information', (done) => {
         chai.request(index)
             .put('/api/psychologist')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
+            .set('Authorization', 'Bearer ' + psychToken)
             .send({
                 "firstname": "stein",
                 "infix": "",
@@ -188,8 +178,7 @@ describe('Update client and psychologist ', function () {
     it('PSYCHOLOGIST: update firstname with invalid information', (done) => {
         chai.request(index)
             .put('/api/psychologist')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
+            .set('Authorization', 'Bearer ' + psychToken)
             .send({
                 "firstname": "stijn2",
                 "infix": "van",
@@ -207,8 +196,7 @@ describe('Update client and psychologist ', function () {
     it('PSYCHOLOGIST: update lastname with invalid information', (done) => {
         chai.request(index)
             .put('/api/psychologist')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
+            .set('Authorization', 'Bearer ' + psychToken)
             .send({
                 "firstname": "stein",
                 "infix": "van",
@@ -226,8 +214,7 @@ describe('Update client and psychologist ', function () {
     it('PSYCHOLOGIST: update infix with invalid information, (1 letter)', (done) => {
         chai.request(index)
             .put('/api/psychologist')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
+            .set('Authorization', 'Bearer ' + psychToken)
             .send({
                 "firstname": "stein",
                 "infix": "a",
@@ -245,8 +232,7 @@ describe('Update client and psychologist ', function () {
     it('PSYCHOLOGIST: update phonenumber with invalid information, (with landcode)', (done) => {
         chai.request(index)
             .put('/api/psychologist')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
+            .set('Authorization', 'Bearer ' + psychToken)
             .send({
                 "firstname": "stein",
                 "infix": "",
@@ -264,8 +250,7 @@ describe('Update client and psychologist ', function () {
     it('PSYCHOLOGIST: update location with invalid information', (done) => {
         chai.request(index)
             .put('/api/psychologist')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NTY5NzcsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5Mjk3N30.DsgHJOkvtIrq7NupsmkVB_YfM9qz-1JGZ3khcEvlOsh-0TTPKd7xG2rjXq6I91Cn2ivBZbZxAqMHUJAneWMRzQ')
+            .set('Authorization', 'Bearer ' + psychToken)
             .send({
                 "firstname": "stein",
                 "infix": "",
@@ -284,7 +269,7 @@ describe('Update client and psychologist ', function () {
     //============================================================================
 
 
-    it('CLIENT: INSERT A CLIENT FOR TESTING', (done) => {
+    it('INSERT A CLIENT FOR TESTING', (done) => {
         chai.request(index)
             .post('/api/register/client')
             .set('Content-Type', 'application/json')
@@ -307,33 +292,26 @@ describe('Update client and psychologist ', function () {
             });
     });
 
-    it('CLIENT: Invalid token', (done) => {
+    it('LOGIN A CLIENT FOR TESTING', (done) => {
         chai.request(index)
-            .put('/api/client')
-            .set('X-Access-Token', 'yJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .post('/api/login/client')
+            .set('Content-Type', 'application/json')
             .send({
-                "firstname": "Stein",
-                "infix": "",
-                "lastname": "veentjes",
-                "dob": "1996-11-27",
-                "phonenumber": "062345678",
-                "city": "Bergen op Zoom",
-                "adress": "Zuidsingel 8",
-                "zipcode": "4611 HB"
+                "email": "stijn@gmail.com",
+                "password": "qwerty123"
             })
             .end((err, res) => {
-                res.should.have.status(498);
-                res.body.should.be.a('object');
+                let result = JSON.parse(res.text);
+                clientToken = result.token;
                 done();
             });
     });
 
+
     it('CLIENT: Invalid route', (done) => {
         chai.request(index)
             .put('/api/cliend')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer ' + clientToken)
             .send({
                 "firstname": "Stein",
                 "infix": "",
@@ -354,8 +332,7 @@ describe('Update client and psychologist ', function () {
     it('CLIENT: update firstname with valid information', (done) => {
         chai.request(index)
             .put('/api/client')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer ' + clientToken)
             .send({
                 "firstname": "Stein",
                 "infix": "",
@@ -376,8 +353,7 @@ describe('Update client and psychologist ', function () {
     it('CLIENT: update lastname with valid information', (done) => {
         chai.request(index)
             .put('/api/client')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer ' + clientToken)
             .send({
                 "firstname": "Stein",
                 "infix": "",
@@ -399,8 +375,7 @@ describe('Update client and psychologist ', function () {
     it('CLIENT: update dob with valid information', (done) => {
         chai.request(index)
             .put('/api/client')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer ' + clientToken)
             .send({
                 "firstname": "Stein",
                 "infix": "",
@@ -421,8 +396,7 @@ describe('Update client and psychologist ', function () {
     it('CLIENT: update phonenumber with valid information', (done) => {
         chai.request(index)
             .put('/api/client')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer ' + clientToken)
             .send({
                 "firstname": "Stein",
                 "infix": "",
@@ -443,8 +417,7 @@ describe('Update client and psychologist ', function () {
     it('CLIENT: update city with valid information', (done) => {
         chai.request(index)
             .put('/api/client')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer ' + clientToken)
             .send({
                 "firstname": "Stein",
                 "infix": "",
@@ -465,8 +438,7 @@ describe('Update client and psychologist ', function () {
     it('CLIENT: update address with valid information', (done) => {
         chai.request(index)
             .put('/api/client')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer ' + clientToken)
             .send({
                 "firstname": "Stein",
                 "infix": "",
@@ -487,8 +459,7 @@ describe('Update client and psychologist ', function () {
     it('CLIENT: update zipcode with valid information', (done) => {
         chai.request(index)
             .put('/api/client')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer ' + clientToken)
             .send({
                 "firstname": "Stein",
                 "infix": "",
@@ -509,8 +480,7 @@ describe('Update client and psychologist ', function () {
     it('CLIENT: update firstname with invalid information', (done) => {
         chai.request(index)
             .put('/api/client')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer ' + clientToken)
             .send({
                 "firstname": "Stein1",
                 "infix": "",
@@ -531,8 +501,7 @@ describe('Update client and psychologist ', function () {
     it('CLIENT: update lastname with invalid information', (done) => {
         chai.request(index)
             .put('/api/client')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer ' + clientToken)
             .send({
                 "firstname": "Stein",
                 "infix": "",
@@ -553,8 +522,7 @@ describe('Update client and psychologist ', function () {
     it('CLIENT: update infix with invalid information', (done) => {
         chai.request(index)
             .put('/api/client')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer ' + clientToken)
             .send({
                 "firstname": "Stein",
                 "infix": "22",
@@ -575,8 +543,7 @@ describe('Update client and psychologist ', function () {
     it('CLIENT: update DOB with invalid information', (done) => {
         chai.request(index)
             .put('/api/client')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer ' + clientToken)
             .send({
                 "firstname": "Stein",
                 "infix": "",
@@ -597,8 +564,7 @@ describe('Update client and psychologist ', function () {
     it('CLIENT: update phonenumber with invalid information', (done) => {
         chai.request(index)
             .put('/api/client')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer ' + clientToken)
             .send({
                 "firstname": "Stein",
                 "infix": "",
@@ -619,8 +585,7 @@ describe('Update client and psychologist ', function () {
     it('CLIENT: update city with invalid information', (done) => {
         chai.request(index)
             .put('/api/client')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer ' + clientToken)
             .send({
                 "firstname": "Stein",
                 "infix": "22",
@@ -641,8 +606,7 @@ describe('Update client and psychologist ', function () {
     it('CLIENT: update address with invalid information', (done) => {
         chai.request(index)
             .put('/api/client')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer ' + clientToken)
             .send({
                 "firstname": "Stein",
                 "infix": "",
@@ -663,8 +627,7 @@ describe('Update client and psychologist ', function () {
     it('CLIENT: update zipcode with invalid information', (done) => {
         chai.request(index)
             .put('/api/client')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer ' + clientToken)
             .send({
                 "firstname": "Stein",
                 "infix": "22",
@@ -685,8 +648,7 @@ describe('Update client and psychologist ', function () {
     it('CLIENT: should return 200 with some with empty fields', (done) => {
         chai.request(index)
             .put('/api/client')
-            .set('X-Access-Token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1Mjg0NjA3MzgsInN1YiI6InN0aWpuQGdtYWlsLmNvbSIsImlhdCI6MTUyNzU5NjczOH0.D-YQqf2dVBkIIK6JXMMGbOqKQeAV7LNo-cL0960o23a_UX8H9P-lQVsUA_q0aqaCbKb3D9d4PzUS0trV629bpA')
+            .set('Authorization', 'Bearer ' + clientToken)
             .send({
                 "firstname": "Stein",
                 "infix": "",
