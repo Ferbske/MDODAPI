@@ -3,7 +3,7 @@ const Errors = require('./Errors');
 class Note {
     constructor(description) {
         if (!(
-            (description === '' || description && /^[^()@#%^&*+=~]/.test(description))
+            (description === '' || description && /^[^()@#%^&*+=~]{0,255}$/.test(description))
         )) {
             return Errors.badRequest();
         }
