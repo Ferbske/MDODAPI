@@ -150,7 +150,7 @@ router.route('/:addictionId?')
                                 } else {
                                     res.status(400).json({
                                         "message": "Bad request"
-                                    })
+                                    });
                                 }
                             });
                         }
@@ -265,10 +265,9 @@ router.route('/:addictionId?')
                             const error = Errors.notFound();
                             res.status(error.code).json(error);
                         } else {
-                            const addictionId = req.params.addictionId || '';
+                            const substanceId = req.body.substanceId;
 
-                            console.log(addictionId);
-                            db.query("DELETE FROM mdod.Addiction WHERE id = ?", [addictionId], (error, result) => {
+                            db.query("DELETE FROM mdod.Addiction WHERE substanceId = ? AND email = ?", [substanceId, clientEmail], (error, result) => {
                                 if (error) {
                                     console.log(error);
                                     const err = Errors.conflict();
