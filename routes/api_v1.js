@@ -16,6 +16,7 @@ const mood = require('./mood');
 const substance = require('./substance');
 const phone = require('./phonenumbers');
 const note = require('./note');
+const messages = require('./messages');
 
 //Routers for goals and risks and difficult moments
 router.use('/goal', goals);
@@ -28,6 +29,7 @@ router.use('/mood', mood);
 router.use('/substance', substance);
 router.use('/phone', phone);
 router.use('/note', note);
+router.use('/messages', messages);
 
 /*
  * Role routes
