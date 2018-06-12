@@ -4,6 +4,7 @@ const auth = require('../auth/authentication');
 const Errors = require('../models/Errors');
 const db = require('../db/databaseConnector');
 const global = require('../globalFunctions');
+const Note = require('../models/Note');
 
 router.route('/single_client')
 /**
@@ -109,24 +110,30 @@ router.route('/')
                     }
 
                     const description = req.body.description || '';
-                    db.query("INSERT INTO mdod.Note(email, description) VALUES(?, ?);", [clientEmail, description], (error, result) => {
-                        if (error) {
-                            console.log(error);
-                            const err = Errors.conflict();
-                            res.status(err.code).json(err);
-                            return;
-                        }
 
-                        if (rows.affectedRows < 1) {
-                            const error = Errors.forbidden();
-                            res.status(error.code).json(error);
-                            return;
-                        }
+                    const note = new Note(description);
+                    if (note._description) {
+                        db.query("INSERT INTO mdod.Note(email, description) VALUES(?, ?);", [clientEmail, description], (error, result) => {
+                            if (error) {
+                                console.log(error);
+                                const err = Errors.conflict();
+                                res.status(err.code).json(err);
+                                return;
+                            }
 
-                        res.status(201).json({
-                            message: "Notitie aangemaakt."
+                            if (rows.affectedRows < 1) {
+                                const error = Errors.forbidden();
+                                res.status(error.code).json(error);
+                                return;
+                            }
+
+                            res.status(201).json({
+                                message: "Notitie aangemaakt."
+                            })
                         })
-                    })
+                    } else {
+                        res.status(note.code).json(note);
+                    }
                 });
             })
         })
