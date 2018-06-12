@@ -45,7 +45,7 @@ router.post('/client', (req, res) => {
     });
 });
 
-router.post('/get/client', (req, res) => {
+router.get('/client', (req, res) => {
     const token = global.stripBearerToken(req.header('Authorization'));
     const data = auth.decodeToken(token, (err, payload) => {
         if (err) {
