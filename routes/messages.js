@@ -130,6 +130,54 @@ router.post('/psychologist', (req, res) => {
     });
 });
 
+router.post('/get/psychologist', (req, res) => {
+    const token = global.stripBearerToken(req.header('Authorization'));
+    const data = auth.decodeToken(token, (err, payload) => {
+        if (err) {
+            console.log('Error handler: ' + err.message);
+            let error = Errors.noValidToken();
+            res.status(error.code).json(error);
+        } else {
+            const email = payload.sub;
+            db.query("SELECT email FROM mdod.Psychologist WHERE email = ?;", [email], (error, rows, result) => {
+                if (error) {
+                    console.log(error);
+                    const err = Errors.unknownError();
+                    res.status(err.code).json(err);
+                    return;
+                }
+                if (rows.length < 1) {
+                    let error = Errors.notFound();
+                    res.status(error.code).json(error);
+                } else if (rows.length > 0) {
+                    const clientEmail = req.body.email;
+                    db.query("SELECT email FROM mdod.Client WHERE email = ?;", [clientEmail], (error, rows) => {
+                        if (error) {
+                            console.log(error);
+                            const err = Errors.unknownError();
+                            res.status(err.code).json(err);
+                            return;
+                        }
+                        if (rows.length < 1) {
+                            let error = Errors.notFound();
+                            res.status(error.code).json(error);
+                        }else if (rows.length > 0){
+                            db.query("SELECT email_psych, message, date FROM mdod.Messages WHERE email_client = ? ORDER BY date DESC", [email], (error, rows) => {
+                                if (error) {
+                                    const err = Errors.conflict();
+                                    res.status(err.code).json(err);
+                                } else {
+                                    res.status(200).json(rows);
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+
 
 
 module.exports = router;
