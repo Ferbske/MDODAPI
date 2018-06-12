@@ -28,14 +28,18 @@ router.post('/client', (req, res) => {
                     const psychEmail = rows[0].contact;
                     if (psychEmail != null) {
                         const message = req.body.message;
-                        db.query("INSERT INTO mdod.Messages (email_client, email_psych, sendBy, message) VALUES (?, ?, ?, ?);", [email, psychEmail, email, message], (err, result) => {
-                            if (error) {
-                                const err = Errors.conflict();
-                                res.status(err.code).json(err);
-                            } else {
-                                res.status(200).json({message: "bericht verstuurd"});
-                            }
-                        });
+                        if (message.length <= 1000 && message.length > 0) {
+                            db.query("INSERT INTO mdod.Messages (email_client, email_psych, sendBy, message) VALUES (?, ?, ?, ?);", [email, psychEmail, email, message], (err, result) => {
+                                if (error) {
+                                    const err = Errors.conflict();
+                                    res.status(err.code).json(err);
+                                } else {
+                                    res.status(200).json({message: "bericht verstuurd"});
+                                }
+                            });
+                        } else {
+                            res.status(400).json({message: "message incorrect"});
+                        }
                     } else {
                         res.status(400).json({message: "Berichten niet mogelijk, u bent niet de psycholoog, of de cliënt heeft nog geen psycholoog gekoppelt."})
                     }
@@ -112,14 +116,18 @@ router.post('/psychologist', (req, res) => {
                             res.status(error.code).json(error);
                         } else if (rows.length > 0) {
                             const message = req.body.message;
-                            db.query("INSERT INTO mdod.Messages (email_client, email_psych, sendBy, message) VALUES (?, ?, ?, ?);", [clientEmail, email, email, message], (err, result) => {
-                                if (error) {
-                                    const err = Errors.conflict();
-                                    res.status(err.code).json(err);
-                                } else {
-                                    res.status(200).json({message: "bericht verstuurd"});
-                                }
-                            });
+                            if (message.length <= 1000 && message.length > 0) {
+                                db.query("INSERT INTO mdod.Messages (email_client, email_psych, sendBy, message) VALUES (?, ?, ?, ?);", [clientEmail, email, email, message], (err, result) => {
+                                    if (error) {
+                                        const err = Errors.conflict();
+                                        res.status(err.code).json(err);
+                                    } else {
+                                        res.status(200).json({message: "bericht verstuurd"});
+                                    }
+                                });
+                            } else {
+                                res.status(400).json({message: "message incorrect"});
+                            }
                         } else {
                             res.status(400).json({message: "Berichten niet mogelijk, u bent niet de psycholoog, of de cliënt heeft nog geen psycholoog gekoppelt."})
                         }
@@ -161,7 +169,7 @@ router.post('/get/psychologist', (req, res) => {
                         if (rows.length < 1) {
                             let error = Errors.notFound();
                             res.status(error.code).json(error);
-                        }else if (rows.length > 0){
+                        } else if (rows.length > 0) {
                             db.query("SELECT sendBy, message, date FROM mdod.Messages WHERE email_client = ? ORDER BY date DESC", [clientEmail], (error, rows) => {
                                 if (error) {
                                     const err = Errors.conflict();
@@ -177,7 +185,6 @@ router.post('/get/psychologist', (req, res) => {
         }
     });
 });
-
 
 
 module.exports = router;
