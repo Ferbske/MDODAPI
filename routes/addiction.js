@@ -34,7 +34,6 @@ router.route('/single_client')
                     return;
                 }
                 else if (rows.length < 1) {
-                    console.log("Hiezo in de forbidden???");
                     const error = Errors.forbidden();
                     res.status(error.code).json(error);
                     return;
