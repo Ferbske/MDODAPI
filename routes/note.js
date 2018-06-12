@@ -67,7 +67,8 @@ router.route('/single_client')
                 });
             })
         })
-    });
+    })
+
 
 router.route('/')
 /**
@@ -203,6 +204,68 @@ router.route('/')
                 });
             });
         });
+    })
+    .put((req, res) =>  {
+        const token = global.stripBearerToken(req.header('Authorization'));
+
+        auth.decodeToken(token, (error, payload) => {
+            // Get the email from payload.
+            const email = payload.sub || '';
+
+            // Check if email from token is a psychologist email.
+            db.query("SELECT email FROM mdod.Psychologist WHERE email = ?;", [email], (error, rows, fields) => {
+                if (error) {
+                    console.log(error);
+                    const err = Errors.conflict();
+                    res.status(err.code).json(err);
+                    return;
+                }
+
+                if (rows.affectedRows < 1) {
+                    const error = Errors.forbidden();
+                    res.status(error.code).json(error);
+                    return;
+                }
+
+                const clientEmail = req.body.email || '';
+
+                db.query("SELECT EMAIL FROM mdod.Client WHERE email = ?;", [clientEmail], (error, rows, fiels) => {
+                    if (error) {
+                        console.log(error);
+                        const err = Errors.conflict();
+                        res.status(err.code).json(err);
+                        return;
+                    }
+
+                    if (rows.affectedRows < 1) {
+                        const error = Errors.notFound();
+                        res.status(error.code).json(error);
+                        return;
+                    }
+
+                    const description = req.body.description || '';
+                    const id = req.body.id || '';
+                    db.query("UPDATE mdod.Note SET description = ? WHERE email = ? AND id = ?", [description, clientEmail, id], (error, result) => {
+                        if (error) {
+                            console.log(error);
+                            const err = Errors.conflict();
+                            res.status(err.code).json(err);
+                            return;
+                        }
+
+                        if (result.affectedRows < 1) {
+                            const error = Errors.forbidden();
+                            res.status(error.code).json(error);
+                            return;
+                        }
+
+                        res.status(202).json({
+                            message: "Notitie geüpdate"
+                        });
+                    })
+                });
+            })
+        })
     });
 
 module.exports = router;
