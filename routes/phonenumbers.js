@@ -40,10 +40,11 @@ router.get('/', (req, res) => {
                             if (error) {
                                 const err = Errors.conflict();
                                 res.status(err.code).json(err);
-                                return;
+
+                            } else{
+                                res.status(200).json(rows);
                             }
-                            res.status(200).json(rows);
-                        })
+                        });
                     }
                 }
             });
@@ -93,8 +94,9 @@ router.put('/', (req, res) => {
                                     console.log(error);
                                     const err = Errors.conflict();
                                     res.status(err.code).json(err);
+                                }else{
+                                    res.status(202).json({message: "Phonenumber changed"})
                                 }
-                                res.status(202).json({message: "Phonenumber changed"})
                             });
                         }
                     } else {

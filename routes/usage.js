@@ -31,7 +31,8 @@ router.route('/:usageId?')
                     res.status(error.code).json(error);
                 } else {
                     db.query("SELECT mdod.Usage.id, mdod.Usage.substanceId, " +
-                        "mdod.Substance.name, mdod.Substance.measuringUnit, mdod.Usage.usedAt, " +
+                        "mdod.Substance.name, mdod.Substance.measuringUnit, " +
+                        "DATE_FORMAT(mdod.`Usage`.usedAt, '%Y-%m-%e:%H-%i') AS 'usedDate_formatted', " +
                         "mdod.Usage.location, mdod.Usage.cause, mdod.Usage.amount, mdod.Usage.mood " +
                         "FROM mdod.Usage " +
                         "INNER JOIN mdod.Substance ON mdod.Usage.substanceId = mdod.Substance.id " +
