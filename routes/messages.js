@@ -170,8 +170,7 @@ router.post('/get/psychologist', (req, res) => {
                             let error = Errors.notFound();
                             res.status(error.code).json(error);
                         } else if (rows.length > 0) {
-                            console.log(email + " " + clientEmail);
-                            db.query("SELECT * FROM mdod.Messages WHERE email_client = ? AND email_psych = ? ORDER BY date DESC", [clientEmail, email], (error, rows) => {
+                            db.query("SELECT sendBy, message, date FROM mdod.Messages WHERE email_client = ? AND email_psych = ? ORDER BY date DESC", [clientEmail, email], (error, rows) => {
                                 if (error) {
                                     const err = Errors.conflict();
                                     res.status(err.code).json(err);

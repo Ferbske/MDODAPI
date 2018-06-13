@@ -318,12 +318,40 @@ describe('Update client and psychologist ', function () {
             });
     });
 
+    it('PSYCHOLOGIST: get messages with valid information', (done) => {
+        chai.request(index)
+            .post('/api/v1/messages/get/psychologist')
+            .set('Authorization', 'Bearer ' + psychToken)
+            .set('Content-Type', 'application/json')
+            .send({
+                "email" : "stijn@gmail.com",
+            })
+            .end((err, res) => {
+                res.should.have.status(200);
+                res.body.should.be.a('array');
+                done();
+            });
+    });
+
+    it('CLIENT: get messages with valid information', (done) => {
+        chai.request(index)
+            .get('/api/v1/messages/client')
+            .set('Authorization', 'Bearer ' + psychToken)
+            .set('Content-Type', 'application/json')
+            .end((err, res) => {
+                res.should.have.status(200);
+                res.body.should.be.a('array');
+                done();
+            });
+    });
+
+
 
 
 
     after(function () {
         deletePsychologist();
         deleteClient();
-        //process.exit(0);
+        process.exit();
     });
 });
