@@ -41,7 +41,7 @@ router.post('/client', (req, res) => {
                             res.status(400).json({message: "message incorrect"});
                         }
                     } else {
-                        res.status(400).json({message: "Berichten niet mogelijk, u bent niet de psycholoog, of de cliënt heeft nog geen psycholoog gekoppelt."})
+                        res.status(400).json({message: "Berichten niet mogelijk, u heeft geen psycholoog."})
                     }
                 }
             });
@@ -129,7 +129,7 @@ router.post('/psychologist', (req, res) => {
                                 res.status(400).json({message: "message incorrect"});
                             }
                         } else {
-                            res.status(400).json({message: "Berichten niet mogelijk, u bent niet de psycholoog, of de cliënt heeft nog geen psycholoog gekoppelt."})
+                            res.status(400).json({message: "Berichten niet mogelijk, u bent niet de psycholoog van deze client, of de cliënt heeft nog geen psycholoog gekoppelt."})
                         }
                     });
                 }
