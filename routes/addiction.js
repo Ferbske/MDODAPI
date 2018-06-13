@@ -77,7 +77,7 @@ router.route('/single_client')
         });
     });
 
-router.route('/')
+router.route('/:addictionId?')
 /**
  * Create a single addiction for a single client. Client email will be set in the body.
  */
@@ -103,14 +103,11 @@ router.route('/')
                 if (error) {
                     console.log(error);
                     const err = Errors.conflict();
-                    res.status(err.code).json(err);
-                    return;
-                }
-                else if (rows.length < 1) {
+                    res.status(err.code).json(err)
+                } else if (rows.length < 1) {
                     console.log("Hiezo in de forbidden???");
                     const error = Errors.forbidden();
                     res.status(error.code).json(error);
-                    return;
                 } else {
 
                     // Check if the client exists.
@@ -119,37 +116,45 @@ router.route('/')
                             console.log(error);
                             const err = Errors.conflict();
                             res.status(err.code).json(err);
-                            return;
-                        }
-                        else if (rows.length < 1) {
+                        } else if (rows.length < 1) {
                             const error = Errors.notFound();
                             res.status(error.code).json(error);
-                            return;
                         } else {
                             // Get the client email.
                             const clientEmail = req.body.email || '';
 
                             const substanceId = req.body.substanceId || '';
-                            db.query("INSERT INTO mdod.Addiction(substanceId, email) VALUES(?, ?);", [substanceId, clientEmail], (error, result) => {
-                                if (error) {
-                                    console.log(error);
-                                    const err = Errors.conflict();
-                                    res.status(err.code).json(err);
-                                    return;
-                                }
+                            db.query("SELECT mdod.Addiction.substanceId, mdod.Addiction.email FROM mdod.Addiction " +
+                                "WHERE mdod.Addiction.substanceId = ? AND mdod.Addiction.email = ?", [substanceId, clientEmail], (error, rows) => {
+                                if (rows.length <= 0) {
 
-                                if (result.affectedRows < 1) {
-                                    const error = Errors.forbidden();
-                                    res.status(error.code).json(error);
-                                    return;
-                                }
+                                    db.query("INSERT INTO mdod.Addiction(substanceId, email) VALUES(?, ?);", [substanceId, clientEmail], (error, result) => {
+                                        if (error) {
+                                            console.log(error);
+                                            const err = Errors.conflict();
+                                            res.status(err.code).json(err);
+                                            return;
+                                        }
 
-                                res.status(201).json({
-                                    message: "Verslaving aangemaakt"
-                                })
-                            })
+                                        if (result.affectedRows < 1) {
+                                            const error = Errors.forbidden();
+                                            res.status(error.code).json(error);
+                                            return;
+                                        }
+
+                                        res.status(201).json({
+                                            message: "Verslaving aangemaakt"
+                                        })
+
+                                    })
+                                } else {
+                                    res.status(400).json({
+                                        "message": "Bad request"
+                                    })
+                                }
+                            });
                         }
-                    });
+                    })
                 }
             });
         });
@@ -180,13 +185,10 @@ router.route('/')
                     console.log(error);
                     const err = Errors.conflict();
                     res.status(err.code).json(err);
-                    return;
-                }
-                else if (rows.length < 1) {
+                } else if (rows.length < 1) {
                     console.log("Hiezo in de forbidden???");
                     const error = Errors.forbidden();
                     res.status(error.code).json(error);
-                    return;
                 } else {
 
                     // Check if the client exists.
@@ -195,35 +197,29 @@ router.route('/')
                             console.log(error);
                             const err = Errors.conflict();
                             res.status(err.code).json(err);
-                            return;
-                        }
-                        else if (rows.length < 1) {
+                        } else if (rows.length < 1) {
                             const error = Errors.notFound();
                             res.status(error.code).json(error);
-                            return;
                         } else {
                             // Get the client email.
                             const clientEmail = req.body.email || '';
 
-                            const addictionId = req.body.id || '';
+                            const addictionId = req.params.addictionId || '';
                             const substanceId = req.body.substanceId || '';
                             db.query("UPDATE mdod.Addiction SET substanceId = ?, email = ? WHERE id = ?", [substanceId, clientEmail, addictionId], (error, result) => {
                                 if (error) {
                                     console.log(error);
                                     const err = Errors.conflict();
                                     res.status(err.code).json(err);
-                                    return;
                                 }
-
-                                if (result.affectedRows < 1) {
+                                else if (result.affectedRows < 1) {
                                     const error = Errors.forbidden();
                                     res.status(error.code).json(error);
-                                    return;
+                                } else {
+                                    res.status(202).json({
+                                        message: "Verslaving geupdate"
+                                    })
                                 }
-
-                                res.status(202).json({
-                                    message: "Verslaving geupdate"
-                                })
                             })
                         }
                     });
@@ -254,29 +250,22 @@ router.route('/')
                     console.log(error);
                     const err = Errors.conflict();
                     res.status(err.code).json(err);
-                    return;
-                }
-                else if (rows.length < 1) {
+                } else if (rows.length < 1) {
                     console.log("Hiezo in de forbidden???");
                     const error = Errors.forbidden();
                     res.status(error.code).json(error);
-                    return;
                 } else {
-
                     // Check if the client exists.
                     db.query("SELECT email FROM mdod.`Client` WHERE email = ?;", [clientEmail], (error, rows, fields) => {
                         if (error) {
                             console.log(error);
                             const err = Errors.conflict();
                             res.status(err.code).json(err);
-                            return;
-                        }
-                        else if (rows.length < 1) {
+                        } else if (rows.length < 1) {
                             const error = Errors.notFound();
                             res.status(error.code).json(error);
-                            return;
                         } else {
-                            const addictionId = req.body.id || '';
+                            const addictionId = req.params.addictionId || '';
 
                             console.log(addictionId);
                             db.query("DELETE FROM mdod.Addiction WHERE id = ?", [addictionId], (error, result) => {
@@ -303,5 +292,4 @@ router.route('/')
             });
         });
     });
-
 module.exports = router;
