@@ -117,7 +117,7 @@ router.route('/')
 
                     const note = new Note(title, description);
                     if (note._description) {
-                        db.query("INSERT INTO mdod.Note(email, title, description) VALUES(?, ?);", [clientEmail, title, description], (error, result) => {
+                        db.query("INSERT INTO mdod.Note(email, title, description) VALUES(?, ?, ?);", [clientEmail, note._title, description], (error, result) => {
                             if (error) {
                                 console.log(error);
                                 const err = Errors.conflict();
