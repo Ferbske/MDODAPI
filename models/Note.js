@@ -1,9 +1,10 @@
 const Errors = require('./Errors');
 
 class Note {
-    constructor(description) {
+    constructor(title, description) {
         if (!(
-            (description === '' || description && /^[^()@#%^&*+=~]/.test(description))
+            (title === '' || title && /^[^()+=@#$%^&*~]$/.test(title))
+            (description === '' || description && /^[^()@#%^&*+=~]$/.test(description))
         )) {
             return Errors.badRequest();
         }
