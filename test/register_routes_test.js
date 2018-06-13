@@ -9,8 +9,30 @@ chai.use(chaiHttp);
 // After successful registration we have a valid token. We export this token
 // for usage in other testcases that require login.
 
+function deletePsychologist() {
+    db.query('DELETE FROM mdod.Psychologist WHERE email = "stijn@gmail.com"'), function (err) {
+        if (err) {
+            console.log(err);
+        }
+    };
+}
+
+function deleteClient() {
+    db.query('DELETE FROM mdod.Client WHERE email = "sjaak@gmail.com"'), function (err) {
+        if (err) {
+            console.log(err);
+        }
+    };
+}
+
 describe('Registration', function () {
     this.timeout(10000);
+
+    before(function () {
+        deletePsychologist();
+        deleteClient();
+    });
+
     it('PSYCHOLOGIST: should return a 201 status when providing valid information', (done) => {
         chai.request(index)
             .post('/api/register/psychologist')
@@ -27,16 +49,11 @@ describe('Registration', function () {
             .end((err, res) => {
                 res.should.have.status(201);
                 res.body.should.be.a('object');
-                db.query('DELETE FROM mdod.Psychologist WHERE email = "stijn@gmail.com"'), function(err){
-                    if (err){
-                        console.log(err);
-                    }
-                };
                 done();
             });
     });
 
-    it('CLIENT: should return a 200 status when providing valid information', (done) => {
+    it('CLIENT: should return a 201 status when providing valid information', (done) => {
         chai.request(index)
             .post('/api/register/client')
             .set('Content-Type', 'application/json')
@@ -73,13 +90,8 @@ describe('Registration', function () {
                 "password" : "qwerty123"
             })
             .end((err, res) => {
-                res.should.have.status(409);
+                res.should.have.status(420);
                 res.body.should.be.a('object');
-                db.query('DELETE FROM mdod.Psychologist WHERE email = "stijn@gmail.com"'), function(err){
-                    if (err){
-                        console.log(err);
-                    }
-                };
                 done();
             });
     });
@@ -101,13 +113,8 @@ describe('Registration', function () {
                 "zipcode" : "6969 HB"
             })
             .end((err, res) => {
-                res.should.have.status(409);
+                res.should.have.status(420);
                 res.body.should.be.a('object');
-                db.query('DELETE FROM mdod.Client WHERE email = "sjaak@gmail.com"'), function(err){
-                    if (err){
-                        console.log(err);
-                    }
-                };
                 done();
             });
     });
@@ -128,11 +135,7 @@ describe('Registration', function () {
             .end((err, res) => {
                 res.should.have.status(400);
                 res.body.should.be.a('object');
-                db.query('DELETE FROM mdod.Psychologist WHERE email = "stijn@gmail.com"'), function(err){
-                    if (err){
-                        console.log(err);
-                    }
-                };
+                deletePsychologist();
                 done();
             });
     });
@@ -156,11 +159,7 @@ describe('Registration', function () {
             .end((err, res) => {
                 res.should.have.status(400);
                 res.body.should.be.a('object');
-                db.query('DELETE FROM mdod.Client WHERE email = "sjaak@gmail.com"'), function(err){
-                    if (err){
-                        console.log(err);
-                    }
-                };
+                deleteClient();
                 done();
             });
     });
@@ -181,11 +180,7 @@ describe('Registration', function () {
             .end((err, res) => {
                 res.should.have.status(400);
                 res.body.should.be.a('object');
-                db.query('DELETE FROM mdod.Psychologist WHERE email = "stijn@gmail.com"'), function(err){
-                    if (err){
-                        console.log(err);
-                    }
-                };
+                deletePsychologist();
                 done();
             });
     });
@@ -209,11 +204,7 @@ describe('Registration', function () {
             .end((err, res) => {
                 res.should.have.status(400);
                 res.body.should.be.a('object');
-                db.query('DELETE FROM mdod.Client WHERE email = "sjaak@gmail.com"'), function(err){
-                    if (err){
-                        console.log(err);
-                    }
-                };
+                deleteClient();
                 done();
             });
     });
@@ -234,11 +225,7 @@ describe('Registration', function () {
             .end((err, res) => {
                 res.should.have.status(400);
                 res.body.should.be.a('object');
-                db.query('DELETE FROM mdod.Psychologist WHERE email = "stijn@gmail.com"'), function(err){
-                    if (err){
-                        console.log(err);
-                    }
-                };
+                deletePsychologist();
                 done();
             });
     });
@@ -262,11 +249,7 @@ describe('Registration', function () {
             .end((err, res) => {
                 res.should.have.status(400);
                 res.body.should.be.a('object');
-                db.query('DELETE FROM mdod.Client WHERE email = "sjaak@gmail.com"'), function(err){
-                    if (err){
-                        console.log(err);
-                    }
-                };
+                deleteClient();
                 done();
             });
     });
@@ -287,11 +270,7 @@ describe('Registration', function () {
             .end((err, res) => {
                 res.should.have.status(400);
                 res.body.should.be.a('object');
-                db.query('DELETE FROM mdod.Psychologist WHERE email = "stijn@gmail.com"'), function(err){
-                    if (err){
-                        console.log(err);
-                    }
-                };
+                deletePsychologist();
                 done();
             });
     });
@@ -315,11 +294,7 @@ describe('Registration', function () {
             .end((err, res) => {
                 res.should.have.status(400);
                 res.body.should.be.a('object');
-                db.query('DELETE FROM mdod.Client WHERE email = "sjaak@gmail.com"'), function(err){
-                    if (err){
-                        console.log(err);
-                    }
-                };
+                deleteClient();
                 done();
             });
     });
@@ -340,11 +315,7 @@ describe('Registration', function () {
             .end((err, res) => {
                 res.should.have.status(400);
                 res.body.should.be.a('object');
-                db.query('DELETE FROM mdod.Psychologist WHERE email = "@gmail.com"'), function(err){
-                    if (err){
-                        console.log(err);
-                    }
-                };
+                deletePsychologist();
                 done();
             });
     });
@@ -368,11 +339,7 @@ describe('Registration', function () {
             .end((err, res) => {
                 res.should.have.status(400);
                 res.body.should.be.a('object');
-                db.query('DELETE FROM mdod.Client WHERE email = "@gmail.com"'), function(err){
-                    if (err){
-                        console.log(err);
-                    }
-                };
+                deleteClient();
                 done();
             });
     });
@@ -394,11 +361,7 @@ describe('Registration', function () {
             .end((err, res) => {
                 res.should.have.status(400);
                 res.body.should.be.a('object');
-                db.query('DELETE FROM mdod.Psychologist WHERE email = "stijn@gmail.com"'), function(err){
-                    if (err){
-                        console.log(err);
-                    }
-                };
+                deletePsychologist();
                 done();
             });
     });
@@ -422,11 +385,7 @@ describe('Registration', function () {
             .end((err, res) => {
                 res.should.have.status(400);
                 res.body.should.be.a('object');
-                db.query('DELETE FROM mdod.Client WHERE email = "sjaak@gmail.com"'), function(err){
-                    if (err){
-                        console.log(err);
-                    }
-                };
+                deleteClient();
                 done();
             });
     });
@@ -447,11 +406,7 @@ describe('Registration', function () {
             .end((err, res) => {
                 res.should.have.status(400);
                 res.body.should.be.a('object');
-                db.query('DELETE FROM mdod.Psychologist WHERE email = "stijn@gmail.com"'), function(err){
-                    if (err){
-                        console.log(err);
-                    }
-                };
+                deletePsychologist()
                 done();
             });
     });
@@ -472,11 +427,7 @@ describe('Registration', function () {
             .end((err, res) => {
                 res.should.have.status(400);
                 res.body.should.be.a('object');
-                db.query('DELETE FROM mdod.Psychologist WHERE email = "stijn@gmail.com"'), function(err){
-                    if (err){
-                        console.log(err);
-                    }
-                };
+                deletePsychologist();
                 done();
             });
     });
@@ -500,11 +451,7 @@ describe('Registration', function () {
             .end((err, res) => {
                 res.should.have.status(400);
                 res.body.should.be.a('object');
-                db.query('DELETE FROM mdod.Client WHERE email = "sjaak@gmail.com"'), function(err){
-                    if (err){
-                        console.log(err);
-                    }
-                };
+                deleteClient();
                 done();
             });
     });
@@ -528,11 +475,7 @@ describe('Registration', function () {
             .end((err, res) => {
                 res.should.have.status(400);
                 res.body.should.be.a('object');
-                db.query('DELETE FROM mdod.Client WHERE email = "sjaak@gmail.com"'), function(err){
-                    if (err){
-                        console.log(err);
-                    }
-                };
+                deleteClient();
                 done();
             });
     });
@@ -556,11 +499,7 @@ describe('Registration', function () {
             .end((err, res) => {
                 res.should.have.status(400);
                 res.body.should.be.a('object');
-                db.query('DELETE FROM mdod.Client WHERE email = "sjaak@gmail.com"'), function(err){
-                    if (err){
-                        console.log(err);
-                    }
-                };
+                deleteClient();
                 done();
             });
     });
@@ -584,13 +523,14 @@ describe('Registration', function () {
             .end((err, res) => {
                 res.should.have.status(400);
                 res.body.should.be.a('object');
-                db.query('DELETE FROM mdod.Client WHERE email = "sjaak@gmail.com"'), function(err){
-                    if (err){
-                        console.log(err);
-                    }
-                };
+                deleteClient();
                 done();
             });
     });
 
+    after(function () {
+        deletePsychologist();
+        deleteClient();
+        //process.exit();
+    });
 });

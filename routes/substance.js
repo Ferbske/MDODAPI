@@ -37,10 +37,10 @@ router.route('/')
                 const name = req.body.name || '';
                 const measuringUnit = req.body.measuringUnit || '';
 
-                const Substance = new Substance(name, measuringUnit);
+                const substance = new Substance(name, measuringUnit);
 
-                if (Substance._name) {
-                    db.query("INSERT INTO mdod.Substance(name, measuringUnit) VALUES(?, ?);", [Substance._name, Substance._measuringUnit], (error, result) => {
+                if (substance._name) {
+                    db.query("INSERT INTO mdod.Substance(name, measuringUnit) VALUES(?, ?);", [substance._name, substance._measuringUnit], (error, result) => {
                         if (error) {
                             console.log(error);
                             const err = Errors.conflict();
@@ -59,7 +59,7 @@ router.route('/')
                         })
                     })
                 } else {
-                    res.status(Substance.code).json(Substance);
+                    res.status(substance.code).json(substance);
                 }
             })
         })
