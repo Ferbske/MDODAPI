@@ -27,7 +27,7 @@ router.post('/client', (req, res) => {
                 } else if (rows.length > 0) {
                     const psychEmail = rows[0].contact;
                     if (psychEmail != null) {
-                        const message = req.body.message;
+                        const message = req.body.message || '';
                         if (message.length <= 1000 && message.length > 0) {
                             db.query("INSERT INTO mdod.Messages (email_client, email_psych, sendBy, message) VALUES (?, ?, ?, ?);", [email, psychEmail, email, message], (err, result) => {
                                 if (error) {
@@ -69,7 +69,7 @@ router.get('/client', (req, res) => {
                     res.status(error.code).json(error);
                 }
                 else if (rows.length > 0) {
-                    db.query("SELECT sendBy, message, date FROM mdod.Messages WHERE email_client = ? ORDER BY date DESC", [email], (error, rows) => {
+                    db.query("SELECT sendBy, message, date FROM mdod.Messages WHERE email_client = ? AND email_psych = (SELECT contact FROM mdod.Client WHERE email = ?) ORDER BY date DESC;", [email, email], (error, rows) => {
                         if (error) {
                             const err = Errors.conflict();
                             res.status(err.code).json(err);
@@ -103,7 +103,7 @@ router.post('/psychologist', (req, res) => {
                     let error = Errors.notFound();
                     res.status(error.code).json(error);
                 } else if (rows.length > 0) {
-                    const clientEmail = req.body.email;
+                    const clientEmail = req.body.email || '';
                     db.query("SELECT email FROM mdod.Client WHERE email = ?;", [clientEmail], (error, rows) => {
                         if (error) {
                             console.log(error);
@@ -115,7 +115,7 @@ router.post('/psychologist', (req, res) => {
                             let error = Errors.notFound();
                             res.status(error.code).json(error);
                         } else if (rows.length > 0) {
-                            const message = req.body.message;
+                            const message = req.body.message || '';
                             if (message.length <= 1000 && message.length > 0) {
                                 db.query("INSERT INTO mdod.Messages (email_client, email_psych, sendBy, message) VALUES (?, ?, ?, ?);", [clientEmail, email, email, message], (err, result) => {
                                     if (error) {
@@ -170,7 +170,8 @@ router.post('/get/psychologist', (req, res) => {
                             let error = Errors.notFound();
                             res.status(error.code).json(error);
                         } else if (rows.length > 0) {
-                            db.query("SELECT sendBy, message, date FROM mdod.Messages WHERE email_client = ? ORDER BY date DESC", [clientEmail], (error, rows) => {
+                            console.log(email + " " + clientEmail);
+                            db.query("SELECT * FROM mdod.Messages WHERE email_client = ? AND email_psych = ? ORDER BY date DESC", [clientEmail, email], (error, rows) => {
                                 if (error) {
                                     const err = Errors.conflict();
                                     res.status(err.code).json(err);
