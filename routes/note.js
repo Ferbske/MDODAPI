@@ -112,11 +112,12 @@ router.route('/')
                         return;
                     }
 
+                    const title = req.body.title || '';
                     const description = req.body.description || '';
 
-                    const note = new Note(description);
+                    const note = new Note(title, description);
                     if (note._description) {
-                        db.query("INSERT INTO mdod.Note(email, description) VALUES(?, ?);", [clientEmail, description], (error, result) => {
+                        db.query("INSERT INTO mdod.Note(email, title, description) VALUES(?, ?, ?);", [clientEmail, note._title, description], (error, result) => {
                             if (error) {
                                 console.log(error);
                                 const err = Errors.conflict();
