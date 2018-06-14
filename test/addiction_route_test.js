@@ -152,4 +152,4 @@ describe("Addiction", () => {
         deleteTestAddiction();
         done();
     })
-});
+})
