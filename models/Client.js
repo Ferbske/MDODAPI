@@ -1,5 +1,23 @@
 const Errors = require('./Errors');
 
+/**
+ * Client domain model with validation.
+ * Required constructor values:
+ * - email
+ * - password
+ * - firstname
+ * - lastname
+ *
+ * Optional:
+ * - infix (insertion)
+ * - phonenumber
+ * - dob (date of birth)
+ * - city
+ * - address
+ * - zipCode
+ *
+ * All the constructor parameters need to be inserted into the constructors.
+ */
 class Client {
     constructor(email, password, firstname, infix, lastname, phonenumber, dob, city, address, zipCode) {
         if (!(
