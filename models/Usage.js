@@ -1,11 +1,11 @@
 const Errors = require('./Errors');
-const moment = require('moment');
 
 class Usage {
     constructor(substanceId, location, cause, amount, mood) {
         if(!(
             location && /^(.|\s){0,80}$/.test(location) &&
-            cause && /^(.|\s){0,80}$/.test(cause)
+            cause && /^(.|\s){0,80}$/.test(cause) &&
+            amount && /^[0-9]{0,5}$/.test(amount)
         )) {
             return Errors.badRequest();
         }
