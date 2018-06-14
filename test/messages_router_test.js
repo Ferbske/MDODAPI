@@ -344,14 +344,10 @@ describe('Update client and psychologist ', function () {
                 done();
             });
     });
-
-
-
-
-
+    
     after(function () {
         deletePsychologist();
         deleteClient();
-        process.exit();
+        //process.exit();
     });
 });
