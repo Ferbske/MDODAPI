@@ -1,7 +1,9 @@
 const Errors = require('./Errors');
 
 /**
- * Client domain model with validation.
+ * Client domain model.
+ *
+ * This object is validated with regex.
  * Required constructor values:
  * - email
  * - password
