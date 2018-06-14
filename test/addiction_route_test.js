@@ -106,14 +106,14 @@ describe("Addiction", () => {
             })
     });
 
-    it('should return a forbidden error when client tries to get all the addictions', (done) => {
+    it('should return a not found error when client tries to get all the addictions', (done) => {
         chai.request(index)
             .post('/api/v1/addiction/single_client')
             .set('Content-Type', 'application/json')
             .set('Authorization', 'Bearer ' + clientToken)
             .send(nonExistingClient)
             .end((err, res) => {
-                res.should.have.status(403);
+                res.should.have.status(404);
                 res.body.should.be.a('object');
                 done();
             })
