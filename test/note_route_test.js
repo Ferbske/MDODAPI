@@ -10,7 +10,7 @@ let psychToken;
 let clientToken;
 
 const singleClient = {
-    email: "niek@gmail.com"
+    email: "chai@test.client"
 };
 
 const nonExistingClient = {
@@ -21,6 +21,18 @@ const testNote = {
     email: singleClient.email,
     description: 'Chai test voor note'
 };
+
+function deleteTestNote() {
+    db.query("DELETE FROM mdod.Note WHERE email = ?", ['chai@test.client'], (error, result) => {
+        if (error) {
+            console.log(error);
+        }
+
+        if (result.affectedRows < 1) {
+            console.log("0 rows affected.");
+        }
+    })
+}
 
 describe('Note', () => {
     before((done) => {
@@ -78,6 +90,20 @@ describe('Note', () => {
             })
     });
 
+    it('should create a note for a single client', (done) => {
+        chai.request(index)
+            .post('/api/v1/note')
+            .set('Content-Type', 'application/json')
+            .set('Authorization', 'Bearer ' + psychToken)
+            .send(testNote)
+            .end((err, res) => {
+                res.should.have.status(201);
+                res.body.should.be.a('object');
+                res.body.should.have.property('message');
+                done();
+            })
+    });
+
     it('should return an array with notes for a single client', (done) => {
         chai.request(index)
             .post('/api/v1/note/single_client')
@@ -90,20 +116,6 @@ describe('Note', () => {
                 res.body[0].should.have.property('id');
                 res.body[0].should.have.property('email');
                 res.body[0].should.have.property('description');
-                done();
-            })
-    });
-
-    it('should create a note for a single client', (done) => {
-        chai.request(index)
-            .post('/api/v1/note')
-            .set('Content-Type', 'application/json')
-            .set('Authorization', 'Bearer ' + psychToken)
-            .send(testNote)
-            .end((err, res) => {
-                res.should.have.status(201);
-                res.body.should.be.a('object');
-                res.body.should.have.property('message');
                 done();
             })
     });
@@ -123,7 +135,7 @@ describe('Note', () => {
                 done();
             })
     });
-    
+
     it('should return a bad request when url is not valid', (done) => {
         chai.request(index)
             .post('/api/v1/notes/single_clients')
@@ -139,4 +151,9 @@ describe('Note', () => {
                 done();
             })
     });
+
+    after((done) => {
+        deleteTestNote();
+        done();
+    })
 });
