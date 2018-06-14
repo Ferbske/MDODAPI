@@ -4,7 +4,7 @@ class Difficult_Moment {
     constructor(description, lust){
         if(!(
             description && /^(.|\s){0,280}$/.test(description) &&
-            lust && /^[0-9]*$/.test(lust)
+            lust && /^[0-6]{0,2}$/.test(lust)
         )) {
             return Errors.badRequest();
         }
