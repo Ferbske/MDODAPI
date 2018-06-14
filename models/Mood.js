@@ -1,10 +1,10 @@
 const Errors = require('./Errors');
-const moment = require('moment');
 
 class Mood {
     constructor(value, description) {
         if(!(
-            description && /^(.|\s){0,280}$/.test(description)
+            value && /^[0-9]*$/.test(value) &&
+            (description = '' ||description && /^(.|\s){0,280}$/.test(description))
         )) {
             return Errors.badRequest();
         }
