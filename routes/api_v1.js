@@ -39,53 +39,37 @@ router.use('/messages', messages);
 router.get('/all/:role', (req, res) => {
     const token = global.stripBearerToken(req.header('Authorization'));
     const role = req.params.role;
-    const data = auth.decodeToken(token, (err, payload) => {
+
+    auth.decodeToken(token, (err, payload) => {
         if (err) {
-            console.log('Error handler: ' + err.message);
             let error = Errors.noValidToken();
             res.status(error.code).json(error);
         } else {
-
             //Get all clients
             if (role === 'client') {
                 const email = payload.sub;
 
-                //Verify email
-                db.query("SELECT email FROM mdod.Psychologist WHERE email = ?;", [email], (error, rows) => {
-
-                    //Query/DB Error
+                global.checkIfEmailIsPsychologistEmail(email, (error, psychRows) => {
                     if (error) {
-                        const err = Errors.unknownError();
-                        res.status(err.code).json(err);
-                        return;
-                    }
-
-                    //No results
-                    if (rows.length < 1) {
-                        let error = Errors.notFound();
                         res.status(error.code).json(error);
                         return;
-                    }
-
-                    //Get all clients
-                    if (rows.length > 0) {
+                    } else {
                         db.query("SELECT email, firstname, infix, lastname FROM mdod.Client", [email], (error, rows) => {
-
-                            //Query/DB Error
+                            // Query/DB Error.
                             if (error) {
                                 const err = Errors.unknownError();
                                 res.status(err.code).json(err);
                                 return;
                             }
 
-                            //No results
+                            // No results.
                             if (rows.length < 1) {
                                 let error = Errors.notFound();
                                 res.status(error.code).json(error);
                                 return;
                             }
 
-                            //Return results
+                            // Return results.
                             if (rows.length > 0) {
                                 res.status(200).json(rows);
                             }
@@ -104,9 +88,9 @@ router.get('/all/:role', (req, res) => {
 router.post('/specific/:role', (req, res) => {
     const token = global.stripBearerToken(req.header('Authorization'));
     const role = req.params.role;
-    const data = auth.decodeToken(token, (err, payload) => {
+
+    auth.decodeToken(token, (err, payload) => {
         if (err) {
-            console.log('Error handler: ' + err.message);
             let error = Errors.noValidToken();
             res.status(error.code).json(error);
         } else {
@@ -114,41 +98,27 @@ router.post('/specific/:role', (req, res) => {
                 const email = payload.sub;
                 const client_email = req.body.email || "";
 
-                //Get Psychologist email
-                db.query("SELECT email FROM mdod.Psychologist WHERE email = ?;", [email], (error, rows) => {
-
-                    //DB/Query Error
+                global.checkIfEmailIsPsychologistEmail(email, (error, psychRows) => {
                     if (error) {
-                        const err = Errors.unknownError();
-                        res.status(err.code).json(err);
-                        return;
-                    }
-
-                    //No results
-                    if (rows.length < 1) {
-                        let error = Errors.notFound();
                         res.status(error.code).json(error);
                         return;
-                    }
-
-                    //Select Client
-                    if (rows.length > 0) {
+                    } else {
                         db.query("SELECT email, contact, phonenumber, birthday, city, adress, zipcode, firstname, infix, lastname FROM mdod.Client WHERE email = ?;", [client_email], (error, rows) => {
-                            // DB/Query Error
+                            // DB/Query Error.
                             if (error) {
                                 const err = Errors.unknownError();
                                 res.status(err.code).json(err);
                                 return;
                             }
 
-                            //No results
+                            // No results.
                             if (rows.length < 1) {
                                 let error = Errors.notFound();
                                 res.status(error.code).json(error);
                                 return;
                             }
 
-                            //Return result
+                            // Return result.
                             if (rows.length > 0) {
                                 res.status(200).json(rows);
                             }
@@ -166,50 +136,32 @@ router.post('/specific/:role', (req, res) => {
 //Add Psychologist to Client
 router.put('/pickclient', (req, res) => {
     const token = global.stripBearerToken(req.header('Authorization'));
-    const data = auth.decodeToken(token, (err, payload) => {
+
+    auth.decodeToken(token, (err, payload) => {
         if (err) {
-            console.log('Error handler: ' + err.message);
-            let error = Errors.noValidToken();
+            const error = Errors.noValidToken();
             res.status(error.code).json(error);
         } else {
             let email = payload.sub;
             const client_email = req.body.email || "";
-            let insert_delete = req.body.insert || "";
-            //Select Psychologist email
-            db.query("SELECT email FROM mdod.Psychologist WHERE email = ?;", [email], (error, rows) => {
-                // DB/Query Error
-                if (error) {
-                    console.log(error);
-                    const err = Errors.unknownError();
-                    res.status(err.code).json(err);
-                    return;
-                }
-                //No results
-                if (rows.length < 1) {
-                    let error = Errors.notFound();
-                    res.status(error.code).json(error);
-                } else if (rows.length > 0) {
+            const insert_delete = req.body.insert || "";
 
-                    //Select Client email
-                    db.query("SELECT email FROM mdod.Client WHERE email = ?;", [client_email], (error, rows) => {
-                        // DB/Query Error
+            global.checkIfEmailIsPsychologistEmail(email, (error, psychRows) => {
+                if (error) {
+                    res.status(error.code).json(error);
+                    return;
+                } else {
+                    global.checkIfEmailIsClientEmail(client_email, (error, clientRow) => {
                         if (error) {
-                            console.log(error);
-                            const err = Errors.unknownError();
-                            res.status(err.code).json(err);
-                        }
-                        //No results
-                        if (rows.length < 1) {
-                            let error = Errors.notFound();
                             res.status(error.code).json(error);
-                        } else if (rows.length > 0) {
+                            return;
+                        } else {
                             if (insert_delete === "0") {
                                 email = null;
                             }
                             //Add Psychologist to Client
                             db.query("UPDATE mdod.Client SET contact = ? WHERE email = ?", [email, client_email], (error, result) => {
                                 if (error) {
-                                    console.log(error);
                                     const err = Errors.unknownError();
                                     res.status(err.code).json(err);
                                 }
@@ -218,32 +170,38 @@ router.put('/pickclient', (req, res) => {
                                 })
                             });
                         }
-                    });
+                    })
                 }
             });
         }
     });
 });
 
-//Get clients from a psychologist
+// Get clients from a psychologist.
 router.get('/clients-by-psychologist', (req, res) => {
     const token = global.stripBearerToken(req.header('Authorization'));
-    const data = auth.decodeToken(token, (err, payload) => {
+
+    auth.decodeToken(token, (err, payload) => {
         if (err) {
-            console.log('Error handler: ' + err.message);
             let error = Errors.noValidToken();
             res.status(error.code).json(error);
         } else {
-
-            //Get Client email
+            // Get Clients by psychologist email.
             const email = payload.sub;
-            db.query("SELECT email, firstname, infix, lastname FROM mdod.Client WHERE contact = ?", [email], (error, rows) => {
+
+            global.checkIfEmailIsPsychologistEmail(email, (error, psychRows) => {
                 if (error) {
-                    console.log(error);
-                    const err = Errors.unknownError();
-                    res.status(err.code).json(err);
+                    res.status(error.code).json(error);
+                } else {
+                    db.query("SELECT email, firstname, infix, lastname FROM mdod.Client WHERE contact = ?", [email], (error, rows) => {
+                        if (error) {
+                            console.log(error);
+                            const err = Errors.unknownError();
+                            res.status(err.code).json(err);
+                        }
+                        res.status(200).json(rows)
+                    });
                 }
-                res.status(200).json(rows)
             });
         }
     });
