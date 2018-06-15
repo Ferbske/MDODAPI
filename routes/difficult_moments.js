@@ -59,26 +59,23 @@ router.post('/', (req, res) => {
     });
 });
 
+/**
+ * Select all the difficult moments for a single client.
+ */
 router.get('/', (req, res) => {
     const token = global.stripBearerToken(req.header('Authorization'));
-    const data = auth.decodeToken(token, (err, payload) => {
+    auth.decodeToken(token, (err, payload) => {
         if (err) {
-            console.log('Error handler: ' + err.message);
             let error = Errors.noValidToken();
             res.status(error.code).json(error);
         } else {
             const email = payload.sub;
-            db.query("SELECT email FROM mdod.Client WHERE email = ?;", [email], (error, rows) => {
+
+            global.checkIfEmailIsClientEmail(email, (error, clientRows) => {
                 if (error) {
-                    const err = Errors.unknownError();
-                    res.status(err.code).json(err);
-                    return;
-                }
-                if (rows.length < 1) {
-                    let error = Errors.notFound();
                     res.status(error.code).json(error);
-                }
-                else if (rows.length > 0) {
+                    return;
+                } else {
                     db.query("SELECT lust, description, prevention, date_lust, Substance.`id`, Substance.name FROM mdod.Difficult_moment LEFT JOIN mdod.Substance ON Difficult_moment.substance_id = Substance.id WHERE email = ? ORDER BY date_lust DESC;", [email], (error, rows) => {
                         if (error) {
                             const err = Errors.conflict();
@@ -89,6 +86,21 @@ router.get('/', (req, res) => {
                     });
                 }
             });
+            //
+            // db.query("SELECT email FROM mdod.Client WHERE email = ?;", [email], (error, rows) => {
+            //     if (error) {
+            //         const err = Errors.unknownError();
+            //         res.status(err.code).json(err);
+            //         return;
+            //     }
+            //     if (rows.length < 1) {
+            //         let error = Errors.notFound();
+            //         res.status(error.code).json(error);
+            //     }
+            //     else if (rows.length > 0) {
+            //
+            //     }
+            // });
         }
     });
 });
