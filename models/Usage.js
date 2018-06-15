@@ -1,11 +1,18 @@
 const Errors = require('./Errors');
 
+/**
+ * Domain object for a client's usage of substances.
+ * This domain object is validated with regex.
+ * All constructor parameters are required.
+ */
 class Usage {
     constructor(substanceId, location, cause, amount, mood) {
         if(!(
+            substanceId && /^\d*$/.test(substanceId) &&
             location && /^(.|\s){0,80}$/.test(location) &&
             cause && /^(.|\s){0,80}$/.test(cause) &&
-            amount && /^[0-9]{0,5}$/.test(amount)
+            amount && /^[0-9]{0,5}$/.test(amount) &&
+            mood && /^[1-5]$/.test(mood)
         )) {
             return Errors.badRequest();
         }
