@@ -28,11 +28,9 @@ router.post('/', (req, res) => {
                     const value = req.body.value || '';
                     const description = req.body.description || '';
                     const mood = new Mood(value, description);
-
-                    if (mood._description) {
+                    if (mood._value) {
                         db.query("INSERT INTO mdod.Mood(email, value, description) VALUES(?, ?, ?)", [email, value, description], (error, result) => {
                             if (error) {
-                                console.log(error);
                                 const err = Errors.conflict();
                                 res.status(err.code).json(err);
                                 return;
@@ -41,6 +39,9 @@ router.post('/', (req, res) => {
                                 message: "Mood aangemaakt"
                             });
                         });
+                    } else{
+                        const err = Errors.badRequest();
+                        res.status(err.code).json(err);
                     }
                 }
             });
@@ -94,8 +95,6 @@ router.get('/status', (req, res) => {
         }
 
         const email = payload.sub;
-
-
         db.query("SELECT DATEDIFF(CURDATE(), MAX(mdod.`Mood`.addedDate)) AS daysDifference " +
             "FROM mdod.Mood " +
             "WHERE mdod.Mood.email = ?;", [email], (error, rows, fields) => {
