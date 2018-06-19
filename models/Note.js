@@ -1,5 +1,9 @@
 const Errors = require('./Errors');
 
+/**
+ * Domain object for a psychologist's note to a client.
+ * Both title and description constructor parameters are not required.
+ */
 class Note {
     constructor(title, description) {
         if (!(

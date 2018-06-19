@@ -1,5 +1,8 @@
 const Error = require('./Error');
 
+/**
+ * Holder class for the used API errors.
+ */
 class Errors {
     /**
      * Similar to 403 Forbidden,
