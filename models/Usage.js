@@ -18,8 +18,8 @@ class Usage {
         }
 
         this._substanceId = substanceId;
-        this._location = location;
-        this._cause = cause;
+        this._location = global.checkEmoji(location);
+        this._cause = global.checkEmoji(cause);
         this._amount = amount;
         this._mood = mood;
       }

@@ -14,7 +14,7 @@ class Mood {
         }
 
         this._value = value;
-        this._description = description;
+        this._description = global.checkEmoji(description);
     }
 }
 

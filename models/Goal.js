@@ -13,7 +13,7 @@ class Goal {
             return Errors.badRequest();
         }
 
-        this._description = description;
+        this._description = global.checkEmoji(description);
     }
 }
 
