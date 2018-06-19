@@ -1,5 +1,6 @@
 const db = require('./db/databaseConnector');
 const Errors = require('./models/Errors');
+const emojiStrip = require('emoji-strip');
 
 /**
  * Receive the token from a bearer token.
@@ -55,9 +56,7 @@ function checkIfEmailIsClientEmail(email, cb) {
  * This function checks if the string contains any emoji it is replaced with an empty string.
  */
 function checkEmoji(string) {
-    string.toUnicode();
-    console.log("EMOJIIIIIIIIIIIIIIIIIIIIIIIIIII ==== " + string);
-    string.replace(/U\+\d\w+/, '');
+    emojiStrip(string);
 }
 
 //U+1F60x
