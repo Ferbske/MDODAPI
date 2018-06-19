@@ -35,6 +35,7 @@ class Psychologist {
         this._email = global.checkEmoji(email);
         this._password = global.checkEmoji(password);
         this._firstname = global.checkEmoji(firstname);
+        this._infix = global.checkEmoji(infix);
         this._lastname = global.checkEmoji(lastname);
         this._phonenumber = global.checkEmoji(phonenumber);
         this._location = global.checkEmoji(location);

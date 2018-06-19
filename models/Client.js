@@ -40,6 +40,7 @@ class Client {
         this._email = global.checkEmoji(email);
         this._password = global.checkEmoji(password);
         this._firstname = global.checkEmoji(firstname);
+        this._infix = global.checkEmoji(infix);
         this._lastname = global.checkEmoji(lastname);
         this._dob = dob;
         this._city = global.checkEmoji(city);
