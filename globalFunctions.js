@@ -56,7 +56,6 @@ function checkIfEmailIsClientEmail(email, cb) {
  * This function checks if the string contains any emoji it is replaced with an empty string.
  */
 function checkEmoji(string) {
-    console.log("IN CHECKEMOJI FUNCITON!!!!!!  ===== " +string);
     return emojiStrip(string);
 }
 

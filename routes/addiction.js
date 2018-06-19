@@ -117,7 +117,7 @@ router.route('/:addictionId?')
                                 } else {
                                     res.status(400).json({
                                         "message": "Bad request"
-                                    })
+                                    });
                                 }
                             });
                         }
