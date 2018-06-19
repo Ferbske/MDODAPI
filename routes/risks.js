@@ -56,7 +56,13 @@ router.route('/:riskId?')
                     })
                 })
             } else {
-                res.status(risk.code).json(goal);
+                if (!risk._description) {
+                    res.status(400).json({
+                        message: "Emoji not allowed"
+                    });
+                } else {
+                    res.status(risk.code).json(goal);
+                }
             }
         });
     })

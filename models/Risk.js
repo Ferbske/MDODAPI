@@ -1,4 +1,5 @@
 const Errors = require('./Errors');
+const global = require('../globalFunctions');
 
 /**
  * Domain object for a client's risk.
@@ -14,7 +15,10 @@ class Risk {
         }
 
         this._description = description;
+
+        global.checkEmoji(this._description);
     }
+
 }
 
 module.exports = Risk;
