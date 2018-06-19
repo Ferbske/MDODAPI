@@ -28,7 +28,7 @@ router.post('/', (req, res) => {
                     const prevention = req.body.prevention || '';
                     const description = req.body.description || '';
                     const substance = req.body.substance || '';
-                    const difficultMoment = new Difficult_Moment(description, lust);
+                    const difficultMoment = new Difficult_Moment(description, prevention, lust);
 
                     if(difficultMoment._description){
                         db.query("SELECT id FROM mdod.Substance WHERE name = ?", [substance], (error, rows, fields) => {
@@ -38,7 +38,7 @@ router.post('/', (req, res) => {
                                 return;
                             }else{
                                 const substance_id = rows[0].id;
-                                db.query("INSERT INTO mdod.Difficult_moment(email, description, prevention, lust, substance_id) VALUES(?, ?, ?, ?, ?)", [email, description, prevention, lust, substance_id], (error, result) => {
+                                db.query("INSERT INTO mdod.Difficult_moment(email, description, prevention, lust, substance_id) VALUES(?, ?, ?, ?, ?)", [email, difficultMoment._description, difficultMoment._prevention, difficultMoment._lust, substance_id], (error, result) => {
                                     if (error) {
                                         const err = Errors.conflict();
                                         res.status(err.code).json(err);
