@@ -183,7 +183,7 @@ router.post("/register/:role", (req, res) => {
                         }
 
                         // If the user doesn't exist. Insert it.
-                        db.query("INSERT INTO mdod.Client VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [email, null, hash, phonenumber, dob, city, address, zipCode, firstname, infix, lastname], (error, result) => {
+                        db.query("INSERT INTO mdod.Client VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [client._email, null, hash, client._phonenumber, client._dob, client._city, client._address, client._zipCode, client._firstname, client._infix, client._lastname], (error, result) => {
                             if (error) {
                                 const err = Errors.conflict();
                                 res.status(err.code).json(error);
