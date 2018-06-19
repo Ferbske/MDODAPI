@@ -1,5 +1,10 @@
 const Errors = require('./Errors');
 
+/**
+ * Domain object for a goal.
+ * This object is validated with regex.
+ * description is required.
+ */
 class Goal {
     constructor(description) {
         if(!(

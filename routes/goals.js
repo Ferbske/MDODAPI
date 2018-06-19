@@ -6,13 +6,15 @@ const db = require('../db/databaseConnector');
 const Goal = require('../models/Goal');
 const global = require('../globalFunctions');
 
+/**
+ * Get the goals for a client by client email.
+ */
 router.route('/:goalId?')
     .get((req, res) => {
         const token = global.stripBearerToken(req.header('Authorization'));
 
         auth.decodeToken(token, (error, payload) => {
             if (error) {
-                console.log(error);
                 const err = Errors.noValidToken();
                 res.status(err.code).json(err);
                 return;
@@ -20,10 +22,8 @@ router.route('/:goalId?')
 
             const email = payload.sub;
 
-            //Check if client
-            db.query("SELECT email FROM mdod.Client WHERE email = ?", [email], (err, rows, fields) => {
-                if (rows.length < 1) {
-                    const error = Errors.forbidden();
+            global.checkIfEmailIsClientEmail(email, (error, clientRows) => {
+                if (error) {
                     res.status(error.code).json(error);
                     return;
                 } else {
@@ -39,23 +39,25 @@ router.route('/:goalId?')
             });
         });
     })
+    /**
+     * This endpoint creates a goal for the client that is logged in.
+     */
     .post((req, res) => {
         const token = global.stripBearerToken(req.header('Authorization'));
 
         auth.decodeToken(token, (error, payload) => {
             if (error) {
-                console.log(error);
                 const err = Errors.noValidToken();
                 res.status(err.code).json(err);
+                return;
             }
             const email = payload.sub;
             const description = req.body.description || '';
 
             const goal = new Goal(description);
 
-            db.query("SELECT email FROM mdod.Client WHERE email = ?", [email], (err, rows, fields) => {
-                if (rows.length < 1) {
-                    const error = Errors.forbidden();
+            global.checkIfEmailIsClientEmail(email, (error, clientRows) => {
+                if (error) {
                     res.status(error.code).json(error);
                     return;
                 } else {
@@ -88,7 +90,6 @@ router.route('/:goalId?')
         auth.decodeToken(token, (error, payload) => {
             // If token is not valid. Return noValidToken error to the user
             if (error) {
-                console.log(error);
                 const err = Errors.noValidToken();
                 res.status(err.code).json(err);
                 return;
@@ -100,9 +101,8 @@ router.route('/:goalId?')
             // Get the email of the person who would like to delete the goal.
             const email = payload.sub;
 
-            db.query("SELECT email FROM mdod.Client WHERE email = ?", [email], (err, rows, fields) => {
-                if (rows.length < 1) {
-                    const error = Errors.forbidden();
+            global.checkIfEmailIsClientEmail(email, (error, clientRows) => {
+                if (error) {
                     res.status(error.code).json(error);
                     return;
                 } else {
@@ -151,15 +151,13 @@ router.route('/:goalId?')
             // The new goal.
             const goal = new Goal(description);
 
-            db.query("SELECT email FROM mdod.Client WHERE email = ?", [email], (err, rows, fields) => {
-                if (rows.length < 1) {
-                    const error = Errors.forbidden();
+            global.checkIfEmailIsClientEmail(email, (error, clientRows) => {
+                if (error) {
                     res.status(error.code).json(error);
                     return;
                 } else {
                     db.query("UPDATE mdod.Goal SET description = ? WHERE goalId = ? AND email = ?", [goal._description, goalId, email], (error, result) => {
                         if (error) {
-                            console.log(error);
                             const err = Errors.conflict();
                             res.status(err.code).json(err);
                             return;

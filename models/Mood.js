@@ -1,10 +1,14 @@
 const Errors = require('./Errors');
 
+/**
+ * Domain object for a client's mood.
+ * Both constructor parameters are required.
+ */
 class Mood {
     constructor(value, description) {
         if(!(
-            value && /^[0-9]*$/.test(value) &&
-            (description = '' ||description && /^(.|\s){0,280}$/.test(description))
+            value && /^[0-6]{0,3}$/.test(value) &&
+            description && /^(.|\s){0,280}$/.test(description)
         )) {
             return Errors.badRequest();
         }

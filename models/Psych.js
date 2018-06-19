@@ -1,5 +1,22 @@
 const Errors = require('./Errors');
 
+/**
+ * Psychologist domain model.
+ *
+ * This object is validated with regex.
+ * Required constructor values:
+ * - email
+ * - password
+ * - firstname
+ * - lastname
+ *
+ * Optional:
+ * - infix (insertion)
+ * - phonenumber
+ * - location
+ *
+ * All the constructor parameters need to be inserted into the constructors.
+ */
 class Psychologist {
     constructor(email, password, firstname, infix, lastname, location, phonenumber) {
         if (!(

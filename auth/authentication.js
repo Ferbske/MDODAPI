@@ -3,6 +3,11 @@ const moment = require('moment');
 const jwt = require('jwt-simple');
 const Errors = require('../models/Errors');
 
+/**
+ * Create the jwt token.
+ * @param email The email of the user that is trying to log in.
+ * @returns {String} The jwt token will be returned. Hashed with SHA512.
+ */
 function encodeToken(email) {
     const payload = {
         exp: moment().add(10, 'days').unix(),
@@ -13,6 +18,11 @@ function encodeToken(email) {
     return jwt.encode(payload, config.secretKey, "HS512", {});
 }
 
+/**
+ * Decode the JWT token to get the payload.
+ * @param token The JWT token that will be decoded.
+ * @param cb Callback method (error, payload).
+ */
 function decodeToken(token, cb) {
     try {
         const payload = jwt.decode(token, config.secretKey, null, "HS512");

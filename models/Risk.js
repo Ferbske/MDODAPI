@@ -1,5 +1,10 @@
 const Errors = require('./Errors');
 
+/**
+ * Domain object for a client's risk.
+ * a risk is a situation where the client could fall back to his/her alcohol or drugs.
+ * Description is required and validated with regex.
+ */
 class Risk {
     constructor(description) {
         if(!(
