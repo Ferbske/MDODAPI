@@ -6,7 +6,6 @@
         "host": "159.65.202.227",
         "username": "mdoduser",
         "password": "mdod0002",
-        "schema": "mdod",
-        "charset": "UTF8_GENERAL_CI"
+        "schema": "mdod"
     }
 }
