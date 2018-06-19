@@ -9,7 +9,8 @@ const dbConfig = process.env.DB_DATABASE && process.env.DB_USER && process.env.D
     host: process.env.DB_HOST,
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    name: process.env.DB_DATABASE
+    name: process.env.DB_DATABASE,
+    charset: 'UTF8_GENERAL_CI'
 } : config.database;
 
 /**
