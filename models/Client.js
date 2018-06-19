@@ -36,14 +36,14 @@ class Client {
         ))) {
             return Errors.badRequest();
         }
-        this._email = email;
-        this._password = password;
-        this._firstname = firstname;
-        this._lastname = lastname;
+        this._email = global.checkEmoji(email);
+        this._password = global.checkEmoji(password);
+        this._firstname = global.checkEmoji(firstname);
+        this._lastname = global.checkEmoji(lastname);
         this._dob = dob;
-        this._city = city;
-        this._address = address;
-        this._zipCode = zipCode;
+        this._city = global.checkEmoji(city);
+        this._address = global.checkEmoji(address);
+        this._zipCode = global.checkEmoji(zipCode);
         this._psychologist = null;
     }
 }

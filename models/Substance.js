@@ -17,8 +17,8 @@ class Substance {
             return Errors.badRequest();
         }
 
-        this._name = name;
-        this._measuringUnit = measuringUnit;
+        this._name = global.checkEmoji(name);
+        this._measuringUnit = global.checkEmoji(measuringUnit);
     }
 }
 

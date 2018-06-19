@@ -13,8 +13,8 @@ class Note {
             return Errors.badRequest();
         }
 
-        this._title = title;
-        this._description = description;
+        this._title = global.checkEmoji(title);
+        this._description = global.checkEmoji(description);
     };
 }
 

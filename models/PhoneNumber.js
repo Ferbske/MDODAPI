@@ -11,7 +11,7 @@ class PhoneNumber {
         )){
             return Errors.badRequest();
         }
-        this._phonenumber = phoneNumber;
+        this._phonenumber = global.checkEmoji(phoneNumber);
     }
 }
 

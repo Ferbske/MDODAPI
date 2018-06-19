@@ -15,7 +15,7 @@ class Difficult_Moment {
             return Errors.badRequest();
         }
 
-        this._description = description;
+        this._description = global.checkEmoji(description);
         this._lust = lust;
     }
 }

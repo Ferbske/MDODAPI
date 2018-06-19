@@ -31,12 +31,12 @@ class Psychologist {
             return Errors.badRequest();
         }
 
-        this._email = email;
-        this._password = password;
-        this._firstname = firstname;
-        this._lastname = lastname;
-        this._phonenumber = phonenumber;
-        this._location = location;
+        this._email = global.checkEmoji(email);
+        this._password = global.checkEmoji(password);
+        this._firstname = global.checkEmoji(firstname);
+        this._lastname = global.checkEmoji(lastname);
+        this._phonenumber = global.checkEmoji(phonenumber);
+        this._location = global.checkEmoji(location);
         this._clients = []
     }
 }
