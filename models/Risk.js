@@ -14,9 +14,9 @@ class Risk {
             return Errors.badRequest();
         }
 
-        this._description = description;
+        this._description = global.checkEmoji(description);
+        console.log("description!!!!!!  ===== " + this._description);
 
-        global.checkEmoji(this._description);
     }
 
 }
