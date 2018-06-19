@@ -1,4 +1,5 @@
 const Errors = require('./Errors');
+const global = require('../globalFunctions');
 
 /**
  * Domain object for a client's mood.
