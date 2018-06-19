@@ -29,7 +29,7 @@ router.post('/', (req, res) => {
                     const description = req.body.description || '';
                     const mood = new Mood(value, description);
                     if (mood._value) {
-                        db.query("INSERT INTO mdod.Mood(email, value, description) VALUES(?, ?, ?)", [email, value, description], (error, result) => {
+                        db.query("INSERT INTO mdod.Mood(email, value, description) VALUES(?, ?, ?)", [email, mood._value, mood._description], (error, result) => {
                             if (error) {
                                 const err = Errors.conflict();
                                 res.status(err.code).json(err);
