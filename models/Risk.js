@@ -15,8 +15,6 @@ class Risk {
         }
 
         this._description = global.checkEmoji(description);
-        console.log("description!!!!!!  ===== " + this._description);
-
     }
 
 }
