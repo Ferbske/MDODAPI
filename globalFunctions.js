@@ -55,8 +55,10 @@ function checkIfEmailIsClientEmail(email, cb) {
  * This function checks if the string contains any emoji it is replaced with an empty string.
  */
 function checkEmoji(string) {
-    string.replace(/[\u0800-\uFFFF]/g, '');
+    string.replace(/U\+\d\w+/, '');
 }
+
+//U+1F60x
 
 module.exports = {
     stripBearerToken,
