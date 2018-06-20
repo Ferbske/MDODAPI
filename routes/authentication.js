@@ -66,7 +66,6 @@ router.post("/login/:role", (req, res) => {
                 return;
             }
 
-            console.log(rows[0]);
             // Compares the provided password with the password in the database.
             bcrypt.compare(password, rows[0].password, (err, result) => {
                 if (err) {
