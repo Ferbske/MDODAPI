@@ -35,7 +35,6 @@ router.post('/client', (req, res) => {
                         if (message._message) {
                             db.query("INSERT INTO mdod.Messages (email_client, email_psych, sendBy, message) VALUES (?, ?, ?, ?);", [email, psychEmail, email, message._message], (err, result) => {
                                 if (err) {
-                                    console.log(err);
                                     const error = Errors.conflict();
                                     res.status(error.code).json(error);
                                 } else if (result.affectedRows < 1) {
