@@ -247,7 +247,7 @@ router.route('/')
                     const description = req.body.description || '';
                     const title = req.body.title || '';
                     const id = req.body.id || '';
-                    db.query("UPDATE mdod.Note SET title = ? description = ? WHERE email = ? AND id = ?", [title, description, clientEmail, id], (error, result) => {
+                    db.query("UPDATE mdod.Note SET title = ?, description = ? WHERE email = ? AND id = ?", [title, description, clientEmail, id], (error, result) => {
                         if (error) {
                             console.log(error);
                             const err = Errors.conflict();
