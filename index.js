@@ -33,6 +33,7 @@ app.use(expressJWT({
     path: ['/api/login/psychologist', '/api/login/client', '/api/register/client', '/api/register/psychologist']
 }), function (error, req, res, next) {
     if (error.name === "UnauthorizedError") {
+        console.log("Ik ben nu in de not authorized function what is going on?!");
         const err = Errors.unauthorized();
         res.status(err.code).json(err);
     }

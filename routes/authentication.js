@@ -52,6 +52,7 @@ router.post("/login/:role", (req, res) => {
     }
     // If the requested user is a client.
     else if (role === 'client') {
+
         // Checks if the provided email exists in the database.
         db.query("SELECT email, password FROM mdod.Client WHERE email = ?", [email], function (err, rows, fields) {
             if (err) {
@@ -64,6 +65,8 @@ router.post("/login/:role", (req, res) => {
                 res.status(error.code).json(error);
                 return;
             }
+
+            console.log(rows[0]);
             // Compares the provided password with the password in the database.
             bcrypt.compare(password, rows[0].password, (err, result) => {
                 if (err) {
